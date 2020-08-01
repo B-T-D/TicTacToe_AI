@@ -24,7 +24,7 @@ class TestMark(unittest.TestCase):
     def test_mark_one(self):
         """Mark an X or O on the center square."""
         # Player should be 'X' after init, X moves first.
-        self.board.mark(row=1, col=1)
+        self.board.mark((row=1, col=1))
         actual_boardstate = self.board._board
         expected_boardstate = [[0, 0, 0],
                                [0, 1, 0],

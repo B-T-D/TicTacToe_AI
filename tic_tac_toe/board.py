@@ -13,8 +13,10 @@ class Board:
         #   todo: Rename to self._state? The state of the board not the board itself
         self._player = 1 # X moves first
 
-    def mark(self, row: int, col:int) -> None:
-        """Put set value to 1 or 2 at position (row, col) for next player's turn."""
+    def mark(self, row: int, col: int) -> None:
+        """Put set value to 1 or 2 at position (row, col) for next player's turn.
+
+        """
         if not (0 <= row <= 2 and 0 <= col <= 2):
             raise ValueError('Invalid board position')
         if self._board[row][col] != 0: # if there's already a mark at that square
@@ -66,6 +68,14 @@ class Board:
     def get_board(self):
         """Public method to return the current board state as a 3 x 3 array."""
         return self._board
+
+    def get_player(self):
+        """Public method to return the current player (whose turn it is).
+
+        Returns:
+            (int): 1 if it's X's turn to move, 2 if O's
+        """
+        return self._player
 
 def main():
     board = Board()
