@@ -76,34 +76,3 @@ class Board:
             (int): 1 if it's X's turn to move, 2 if O's
         """
         return self._player
-
-def main():
-    board = Board()
-    refresh_board(board)
-    board.mark(1, 1)
-    refresh_board(board)
-    board.mark(0, 0)
-    refresh_board(board)
-    board.mark(2, 2)
-    refresh_board(board)
-    board.mark(0, 1)
-    refresh_board(board)
-    board.mark(0, 2)
-    refresh_board(board)
-    board.mark(1, 2)
-    refresh_board(board)
-    board.mark(2, 0)
-    refresh_board(board)
-
-def refresh_board(board):
-    """
-    Args:
-        board (Board object): pass
-    """
-    print(board)
-    print(f"winner: {board.winner()}")
-    print("******MOVE******")
-    
-if __name__ == '__main__':
-    main()
-        
