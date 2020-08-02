@@ -226,14 +226,9 @@ class TestPublicAccessors(unittest.TestCase):
         new_tree = GeneralTree()
         self.assertTrue(new_tree.is_empty())
 
-class TestNonpublicTraversalMethods(unittest.TestCase):
-    """Tests for the nonpublic tree-traversal methods used by the various public
-    generators."""
-
-    pass
-
-class TestPublicGenerators(unittest.TestCase):
-    """Tests for the public methods that generate an iteration."""
+class TestGenerators(unittest.TestCase):
+    """Tests for the public methods that generate an iteration, and the nonpublic
+    tree-traversal methods they rely on."""
 
     def setUp(self):
         # Build 12-element test tree
@@ -247,15 +242,16 @@ class TestPublicGenerators(unittest.TestCase):
         assert node_2._element == 2 # double check correct node, this isn't an
                                     #   ordered tree, so relying on list's
                                     #   ordering to access a specific node for now
-        self.tree._add_child(self.tree._make_position(node_2), 5)
+        self.leaf_node_5 = self.tree._add_child( # save for when need a leaf
+                             self.tree._make_position(node_2), 5)
 
         # 3 has 4 children, 6, 7, 8, and 9
-        node_3 = self.tree.root()._node._children[1]
-        assert node_3._element == 3
+        self.node_3 = self.tree.root()._node._children[1]
+        assert self.node_3._element == 3
         for i in range(6, 10):
-            self.tree._add_child(self.tree._make_position(node_3), i)
+            self.tree._add_child(self.tree._make_position(self.node_3), i)
         # Among 3's children, 6 has one child, 12; other 3 are leaves
-        node_6 = node_3._children[0]
+        node_6 = self.node_3._children[0]
         assert node_6._element == 6
         self.tree._add_child(self.tree._make_position(node_6), 12)
 
@@ -266,23 +262,91 @@ class TestPublicGenerators(unittest.TestCase):
             self.tree._add_child(self.tree._make_position(node_4), i)
         assert len(self.tree) == 12 # confirm all 12 elements in the tree
 
-    def test_children(self):
+    def test_children_of_root(self):
         """Does the children() method allow caller to iterate over the Positions
-        that represent the children of the Position the method was called with?
+        that represent the children of root when children is called with root
+        as its Position arg?
         """
         expected_root_children_elements = set([2, 3, 4]) # Values stored at root's
                                                         # children
-        actual_root_children_elements = []
+        expected_root_children_positions = [self.tree._make_position(i) for i in
+                                            self.tree.root()._node._children]
+        actual_root_children_elements = set()
+        actual_root_children_positions = [] # positions not hashable so this works
+                                            #   for now, should ignore order though.
         for child in self.tree.children(self.tree.root()):
-            actual_root_children_elements.append(child._node._element)
+            actual_root_children_elements.add(child._node._element)
+            actual_root_children_positions.append(child)
         actual_root_children_elements = set(actual_root_children_elements)
-        self.assertEqual(actual_root_children_elements,
+        
+        self.assertEqual(actual_root_children_elements, # compare the elements sets
                          expected_root_children_elements)
+        self.assertEqual(actual_root_children_positions, # compare the positions lists
+                         expected_root_children_positions)
+
+    def test_children_of_general_node(self):
+        """Does children() method yield the correct Positions and elements
+        when called on a non-root Position that has several children?"""
+        expected_children_positions = [self.tree._make_position(i) for i in
+                                       self.node_3._children]
+        # Can't cast it to set because positions not hashable
+        assert len(expected_children_positions) == 4, "node 3 should have 4\
+children from setUp"
+        actual_children_positions = []
+        for child in self.tree.children(self.tree._make_position(self.node_3)):
+            actual_children_positions.append(child)
+        self.assertEqual(actual_children_positions, expected_children_positions)
+        # todo: works for now but should ignore order. 
         
-        
+    def test_children_of_leaf(self):
+        """Does children() return None when called on a leaf?"""
+        leaf_position = self.leaf_node_5
+        for child in self.tree.children(leaf_position):
+            self.assertIsNone(child)
+
+    def test_subtree_preorder(self):
+        """Does _subtree_preorder yield the tree's elements in the correct
+        order?"""
+        expected_elements = [1, 2, 5, 3, 6, 12, 7, 8, 9, 4, 10, 11]
+            # Nodes (storing these elements) should be yielded in this order when
+            #   preorder traversing the entire tree by passing root as the Position
+            #   arg.
+        assert len(expected_elements) == len(self.tree)
+        yielded_elements = []
+        for position in self.tree._subtree_preorder(self.tree.root()):
+            yielded_elements.append(position._node._element)
+        self.assertEqual(yielded_elements, expected_elements)
+
+    def test_preorder(self):
+        """Does the public preorder method yield the tree's elements in the same,
+        correct order as nonpublic _subtree_preorder?"""
+        # Confirm that the two separate generator objects yield same objects
+        expected_order = [i for i in self.tree._subtree_preorder(self.tree.root())]
+        actual_order = [i for i in self.tree.preorder()]
+        self.assertEqual(actual_order, expected_order)
+
+    def test_positions(self):
+        """Does positions() yield the tree's elements in the same order as its
+        traversal method?"""
+        # Test should break if default traversal method changes away from preorder
+        expected_order = [i for i in self.tree.preorder()]
+        actual_order = [i for i in self.tree.positions()]
+        self.assertEqual(actual_order, expected_order)
+
+    def test_iter(self):
+        """Does __iter__ yield the tree's elements in the same order as the
+        positions() method?"""
+        # __iter__ uses whatever traversal positions() uses--encapsulation.
+        expected_order = [i._node._element for i in self.tree.positions()]
+        actual_order = [i for i in self.tree]
+        self.assertEqual(actual_order, expected_order)
+
+    def test_breadthfirst(self):
+        """Does breadthfirst() yield the tree's Positions in the expected order?"""
+        # Expedient to test by element values for now.
+        expected_order_elements = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        actual_order_elements = [i._node._element for i in self.tree.breadthfirst()]
+        self.assertEqual(actual_order_elements, expected_order_elements)
         
 
-
-if __name__ == '__main__':
-    unittest.main()
-
+if __name__ == '__main__': unittest.main() # one-liner so coverage will ignore

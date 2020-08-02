@@ -1,6 +1,11 @@
 # todo: style intent = shorthand in private methods but not publics. E.g.
 #   "p" vs. "position"
 
+"""
+GeneralTree class as well as a LinkedQueue class used for GeneralTree's
+implementation of breadth-first traversal.
+"""
+
 class GeneralTree:
     """Concrete implementation of a general tree data structure. Intended to be
     reusable."""
@@ -290,7 +295,6 @@ class GeneralTree:
         Yields:
             (Position): The next position reached by a breadth-first traversal.
         """
-        raise NotImplementedError("Needs LinkedQueue")
         # Add chilcren to queue when the "visits" learn of them by visiting
         #   their parent, then go back and actually visit them later once they
         #   reach the head of the queue (as higher-height nodes are visited and
@@ -324,8 +328,8 @@ class GeneralTree:
 
     def positions(self):
         """
-        Generate an iteration of all Positions of the tree. Order depends on
-        traversal algorithm. 
+        Generate an iteration of all Positions of the tree. Uses preorder
+        traversal.
 
         Args:
             None
@@ -333,7 +337,7 @@ class GeneralTree:
         Yields:
             (Position): The next Postion object in the tree.
         """
-        raise NotImplementedError
+        return self.preorder()
 
     def __iter__(self):
         """
@@ -344,7 +348,8 @@ class GeneralTree:
             (object): The next object stored as an element of a tree Position.
                 Of whatever type that data is.
         """
-        raise NotImplementedError
+        for position in self.positions(): # Use same order as positions()
+            yield position.element()   # ...but yield elements instead of Positions
 
     # --------------------- nonpublic traversal methods ----------------------
 
@@ -361,4 +366,62 @@ class GeneralTree:
         """Generate a postorder iteration of positions in subtree rooted at
         Position p."""
         raise NotImplementedError
-    
+
+class LinkedQueue:
+    """FIFO queue implementation using a singly linked list for storage."""
+
+    class _Node:
+
+        __slots__ = '_element', '_next'
+                                        
+        def __init__(self, element, next):
+            """
+            Args:
+                _next (_Node): another _Node object.
+                _element (object): object of whatever type is stored in the LL stack.
+            """
+            self._element = element # reference to user's element
+            self._next = next # reference to next node
+
+    def __init__(self):
+        """Create an empty queue."""
+        self._head = None
+        self._tail = None
+        self._size = 0 # number of queue elements
+
+    def __len__(self):
+        """Return the number of elements in the queue."""
+        return self._size
+
+    def is_empty(self):
+        """Return True if the queue is empty."""
+        return self._size == 0
+
+    def first(self):
+        """Return (but don't remove) the element at the front of the queue."""
+        if self.is_empty():
+            raise Empty('Queue is empty')
+        return self._head._element # front aligned with head of list
+
+    def dequeue(self):
+        """Remove and return the first element of the queue (i.e. FIFO). Raise Empty
+        exception if the queue is empty.
+        """
+        if self.is_empty():
+            raise Empty('Queue is empty')
+        answer = self._head._element
+        self._head = self._head._next
+        self._size -= 1
+        if self.is_empty(): # If completion of this dequeue emptied the queue
+            self._tail = None # Removed head had been the tail.
+        return answer
+
+    def enqueue(self, e):
+        """Add an element to the back of the queue."""
+        newest = self._Node(e, None) # node will be new tail node bc it's going in at end
+        if self.is_empty():
+            self._head = newest
+        else:
+            self._tail._next = newest
+        self._tail = newest # update reference to tail node
+        self._size += 1    
