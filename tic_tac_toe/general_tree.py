@@ -1,3 +1,6 @@
+# todo: style intent = shorthand in private methods but not publics. E.g.
+#   "p" vs. "position"
+
 class GeneralTree:
     """Concrete implementation of a general tree data structure. Intended to be
     reusable."""
@@ -145,7 +148,8 @@ class GeneralTree:
         """
         child = None
         node = self._validate(p)
-        if self.num_children(p) > 1: raise ValueError("p has multiple children")
+        if self.num_children(p) > 1:
+            raise ValueError("p has multiple children")
         if self.num_children(p) == 1:
             child = node._children[0] # better for time or space to list.pop()?
         if child is not None:
@@ -162,6 +166,20 @@ class GeneralTree:
         node._parent = node # convention for deprecated node (make it its own parent)
         return node._element
 
+    def _recursively_delete(self, p):
+        # Should this be a public method instead / also?
+        """
+        Delete Position p and all its children.
+        
+        """
+        # Return the element stored at p? Or return the whole subtree that was
+        #   deleted?
+        raise NotImplementedError
+
+        # base case: p is a leaf
+
+        # recursive case: call _recursively_delete on p._node._children[0]
+
     
 
     # ----------------------- public accessor methods ------------------------
@@ -177,9 +195,9 @@ class GeneralTree:
             (Position): Position object located at the root, or None if
                 tree is empty.
         """
-        pass
+        return self._make_position(self._root)
 
-    def is_root(position):
+    def is_root(self, position):
         """
 
         Args:
@@ -188,7 +206,7 @@ class GeneralTree:
         Returns:
             (bool): True if position is the root of the tree, else False.
         """
-        pass
+        return self.root() == position
 
     def parent(self, position):
         """
@@ -200,7 +218,8 @@ class GeneralTree:
             (Position): Position object that is position's parent, or None if
                 position is the root of the tree.
         """
-        pass
+        node = self._validate(position)
+        return self._make_position(node._parent)
 
     def num_children(self, position):
         """
@@ -216,6 +235,76 @@ class GeneralTree:
         #   storing an instance variable num_children for each node.
         return len(position._node._children)
 
+    def is_leaf(self, position):
+        """
+
+        Args:
+            position (Position): Position object located in this tree.
+
+        Returns:
+            (bool): True if position has no children, else False.
+        """
+        return self.num_children(position) == 0
+
+    def __len__(self):
+        """
+        Returns:
+            (int): Total number of Positions, i.e. elements, in the tree
+        """
+        return self._size
+
+    def is_empty(self):
+        """
+        Returns:
+            (bool): True if tree is empty, else False.
+        """
+        return len(self) == 0
+
+    def preorder(self):
+        """Generate a preorder-traversal iteration of positions in the tree.
+
+        Yields:
+            (Position): The next position in the tree reached by a preorder
+                traversal.
+        """
+        if not self.is_empty():
+            for position in self._subtree_preorder(self.root()): # start recursion
+                yield position
+
+    def postorder(self):
+        """Generate a postorder iteration of positions in the tree.
+
+        Args:
+            position (Position): Position object located in this tree.
+
+        Yields:
+            (Position): The next position reached by a postorder traversal.
+        """
+        if not self.is_empty():
+            for position in self._subtree_postorder(self.root()): # start recursion
+                yield position
+
+    def breadthfirst(self):
+        """Generate a breadth-first iteration of the positions in the tree.
+
+        Yields:
+            (Position): The next position reached by a breadth-first traversal.
+        """
+        raise NotImplementedError("Needs LinkedQueue")
+        # Add chilcren to queue when the "visits" learn of them by visiting
+        #   their parent, then go back and actually visit them later once they
+        #   reach the head of the queue (as higher-height nodes are visited and
+        #   FIFO-ed out of the queue).
+        if not self.is_empty():
+            fringe = LinkedQueue() # Enqueue positions that are known but not yet
+            fringe.enqueue(self.root()) #   ...visited.
+            while not fringe.is_empty():
+                position = fringe.dequeue() # remove from front of queue
+                yield position
+                for child in self.children(position):
+                    fringe.enqueue(child) # Add each child of the newly visited
+                                            #  ...position to the queue
+
     def children(self, position):
         """Generate an iteration of Positions representing the children nodes
         of position.
@@ -226,32 +315,12 @@ class GeneralTree:
         Yields:
             (Position): The next Position object among position's children.
         """
-        pass
-
-    def is_leaf(self, position):
-        """
-
-        Args:
-            position (Position): Position object located in this tree.
-
-        Returns:
-            (bool): True if position has no children, else False.
-        """
-        pass
-
-    def __len__(self):
-        """
-        Returns:
-            (int): Total number of Positions, i.e. elements, in the tree
-        """
-        pass
-
-    def is_empty(self):
-        """
-        Returns:
-            (bool): True if tree is empty, else False.
-        """
-        pass
+        node = self._validate(position)
+        # In current implementation, children are already stored as a python list
+        for child in node._children:
+            yield self._make_position(child) # yield it back as a Position,
+                                                # rather than a _Node
+        
 
     def positions(self):
         """
@@ -264,6 +333,7 @@ class GeneralTree:
         Yields:
             (Position): The next Postion object in the tree.
         """
+        raise NotImplementedError
 
     def __iter__(self):
         """
@@ -274,4 +344,21 @@ class GeneralTree:
             (object): The next object stored as an element of a tree Position.
                 Of whatever type that data is.
         """
-        pass
+        raise NotImplementedError
+
+    # --------------------- nonpublic traversal methods ----------------------
+
+    def _subtree_preorder(self, p):
+        """Generate a preorder iteration of positions in subtree rooted at
+        Position p."""
+        yield p # yielding p to the caller (other method in this class)
+                #   implements performing the "visit".
+        for c in self.children(p):
+           for other in self._subtree_preorder(c): # recursively do preorder on c's subtree
+               yield other # ...and yield each to the caller
+        
+    def _subtree_postorder(self, p):
+        """Generate a postorder iteration of positions in subtree rooted at
+        Position p."""
+        raise NotImplementedError
+    
