@@ -43,6 +43,38 @@ class TestPosition(unittest.TestCase):
         new_position = GeneralTree.Position(other_container, self.node)
         self.assertEqual(self.test_position, new_position)
 
+class TestValidate(unittest.TestCase):
+    """Tests for the _validate utility method."""
+
+    def setUp(self):
+        self.tree = GeneralTree()
+        self.root = self.tree._add_root("Root element")
+        for i in range(3):
+            self.tree._add_child(self.tree.root(), i)
+
+    def test_not_a_position(self):
+        """Does _validate raise TypeError when "p" is not a Position object?"""
+        with self.assertRaises(TypeError):
+            self.tree._validate("spam")
+
+    def test_wrong_container(self):
+        """Does _validate raise ValueError when "p" is a Position object from
+        a container other than the tree instance whose _validate method is being
+        called?"""
+        position_from_other_container = GeneralTree()._add_root("spam root")
+        with self.assertRaises(ValueError):
+            self.tree._validate(position_from_other_container)
+
+    def test_node_is_own_parent(self):
+        """Does _validate raise ValueError when the _Node corresponding to Position
+        "p" is its own parent (the convention for a deprecated node)?"""
+        position = self.tree._add_child(self.tree.root(),
+                                        "deprecated node's element")
+        position._node._parent = position._node
+        with self.assertRaises(ValueError):
+            self.tree._validate(position)
+        
+
 class TestTreeConstructors(unittest.TestCase):
     """Test __init__ and add_root."""
 
@@ -58,6 +90,13 @@ class TestTreeConstructors(unittest.TestCase):
         root = self.test_tree._add_root("Root element")
         self.assertEqual(self.test_tree._root, root._node)
         self.assertEqual(self.test_tree._size, 1)
+
+    def test_add_root_already_exists(self):
+        """Does _add_root() raise ValueError when trying to add a root to a tree
+        that already has one?"""
+        root = self.test_tree._add_root("Root element")
+        with self.assertRaises(ValueError):
+            self.test_tree._add_root("Interloping root element")
 
 class TestAddChild(unittest.TestCase):
     """Test _add_child internal method."""
@@ -149,6 +188,82 @@ class TestDelete(unittest.TestCase):
         assert self.tree.num_children(self.first_child) == 3
         with self.assertRaises(ValueError):
             self.tree._delete(self.first_child)
+
+    def test_delete_root(self):
+        """Does the delete method properly handle deletion of root?"""
+        self.tree._delete(self.root)
+        # Object stored as instance variable self.first_child should now be
+        #   the root. 
+        self.assertEqual(self.tree.root(), self.first_child)
+        
+
+class TestRecursivelyDelete(unittest.TestCase):
+    """Tests for _recursively_delete."""
+
+    def setUp(self):
+        """Create same 12-element, 4-layer tree used in TestPublicAccessors."""
+        # Build 12-element test tree
+        self.tree, self.positions = twelve_element_test_tree()
+
+    def test_recursively_delete_leaf(self):
+        """The base case."""
+        # Position 12 is a leaf at depth 4
+        starting_length = len(self.tree)
+        position = self.positions[12]
+        node = position._node
+        parent = position._node._parent
+        self.tree._recursively_delete(position)
+        self.assertEqual(len(self.tree), starting_length - 1)
+        self.assertEqual(node, node._parent) # confirm convention for deprecated
+                                                # nodes was applied
+
+    def test_recursively_delete_node_with_one_child(self):
+        starting_length = len(self.tree)
+        # Position 2 is a child of root with one child of its own, position 5.
+        position = self.positions[2]
+        node_2 = position._node
+        node_5 = self.positions[5]._node
+        self.tree._recursively_delete(position)
+        self.assertEqual(len(self.tree), starting_length - 2)
+
+        # confirm convention for deprecated nodes applied to both deleted nodes
+        self.assertEqual(node_2, node_2._parent)
+        self.assertEqual(node_5, node_5._parent)
+
+    def test_recursively_delete_node_with_multiple_leaf_children(self):
+        """Node to be recursively deleted has multiple children, but those
+        have no children of their own."""
+        starting_length = len(self.tree)
+        position = self.positions[4]
+        node_4 = position._node
+        node_10 = self.positions[10]._node
+        node_11 = self.positions[11]._node
+        self.tree._recursively_delete(position)
+        self.assertEqual(len(self.tree), starting_length - 3) # 3 nodes should be gone
+
+        # confirm nodes deprecated
+        self.assertEqual(node_4, node_4._parent)
+        self.assertEqual(node_10, node_10._parent)
+        self.assertEqual(node_11, node_11._parent)
+
+    def test_recursively_delete_node_with_multiple_child_layers(self):
+        """Node to be recursively deleted has multiple children, and at least one
+        of those children has a child of its own."""
+        # Node 3 has four children. One of those children, node 6, has one child
+        #   of its own, node 12. Others are leaves.
+        start_length = len(self.tree)
+        position = self.positions[3]
+        nodes_for_deletion = [position._node]
+        for i in [6, 7, 8, 9, 12]:
+            nodes_for_deletion.append(self.positions[i]._node)
+        self.tree._recursively_delete(position)
+
+        self.assertEqual(len(self.tree), start_length - 6) # 6 nodes should be gone
+
+        # confirm nodes deprecated:
+        for node in nodes_for_deletion:
+            self.assertEqual(node, node._parent)
+        
         
 class TestPublicAccessors(unittest.TestCase):
     """Test that the main public accessor methods work for a simple test
@@ -347,6 +462,53 @@ children from setUp"
         expected_order_elements = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         actual_order_elements = [i._node._element for i in self.tree.breadthfirst()]
         self.assertEqual(actual_order_elements, expected_order_elements)
-        
+
+def twelve_element_test_tree():
+    """Helper function to generate the same 12-element, 4-layer test tree in a way
+    that's callable by setUp methods throughout this test module.
+
+    Returns:
+        (tuple): (GeneralTree, Dict) GeneralTree object an a dictionary for use
+            as node-access shortcuts.
+    """
+    
+    tree = GeneralTree()
+    positions = {}
+    positions[1] = tree._add_root(1)
+    for i in range(2, 5): # Children of root with elements 2, 3, 4
+        positions[i] = tree._add_child(tree.root(), i)
+
+    # 2 has one leaf-child with element=5
+    node_2 = tree.root()._node._children[0]
+    assert node_2._element == 2 # double check correct node, this isn't an
+                                #   ordered tree, so relying on list's
+                                #   ordering to access a specific node for now
+    positions[5] = tree._add_child( # save for when need a leaf
+                         tree._make_position(node_2), 5)
+
+    # 3 has 4 children, 6, 7, 8, and 9
+    node_3 = tree.root()._node._children[1]
+    assert node_3._element == 3
+    for i in range(6, 10):
+        positions[i] = tree._add_child(tree._make_position(node_3), i)
+    # Among 3's children, 6 has one child, 12; other 3 are leaves
+    node_6 = node_3._children[0]
+    assert node_6._element == 6
+    positions[12] = tree._add_child(tree._make_position(node_6), 12)
+
+    # Node 4 has two children, 10 and 11, both leaves
+    node_4 = tree.root()._node._children[2]
+    assert node_4._element == 4
+    for i in range(10, 12):
+        positions[i] = tree._add_child(tree._make_position(node_4), i)
+    assert len(tree) == len(positions) == 12 # confirm all 12 elements in the tree and all 12
+                            # positions captured in the dict.
+    
+
+    # confirm all the dict's key match the actual underlying element values:
+    for key in positions.keys():
+        assert key == positions[key]._node._element
+
+    return tree, positions
 
 if __name__ == '__main__': unittest.main() # one-liner so coverage will ignore

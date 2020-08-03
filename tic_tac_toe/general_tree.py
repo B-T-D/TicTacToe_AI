@@ -168,6 +168,9 @@ class GeneralTree:
             # Might be fine though. This child's child would be "pulled up"
             #   with it by the promotion, without any further action, right?
         self._size -= 1
+        if node._parent is not None: # if the node was not root...
+            node._parent._children.remove(node) # ...delete node from list of its
+                                            # ...parent's child nodes
         node._parent = node # convention for deprecated node (make it its own parent)
         return node._element
 
@@ -177,13 +180,17 @@ class GeneralTree:
         Delete Position p and all its children.
         
         """
+        
         # Return the element stored at p? Or return the whole subtree that was
         #   deleted?
-        raise NotImplementedError
-
-        # base case: p is a leaf
-
-        # recursive case: call _recursively_delete on p._node._children[0]
+        if self.is_leaf(p):
+            self._delete(p)
+            return
+        self._recursively_delete(self._make_position(
+            p._node._children[0]))
+        return self._recursively_delete(p)
+        
+            
 
     
 
