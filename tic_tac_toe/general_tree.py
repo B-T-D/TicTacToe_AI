@@ -94,6 +94,19 @@ class GeneralTree:
         """
         return self.Position(self, node) if node is not None else None
 
+    def _height_func(self, p):
+        """Return the height of the subtree rooted at Position p.
+        Args:
+            p (Position): position in the tree
+
+        Returns:
+            (int): height of the relevant subtree
+        """
+        if self.is_leaf(p):
+            return 0 # base case
+        else:
+            return 1 + max(self._height_func(c) for c in self.children(p))
+
     # ----------------------- general tree constructor ----------------------
     def __init__(self):
         """Create an initially empty general tree."""
@@ -190,10 +203,6 @@ class GeneralTree:
             p._node._children[0]))
         return self._recursively_delete(p)
         
-            
-
-    
-
     # ----------------------- public accessor methods ------------------------
 
     def root(self):
@@ -272,8 +281,37 @@ class GeneralTree:
         """
         return len(self) == 0
 
+    def height(self, position=None):
+        """
+        Return the height of the subtree rooted at position. If position is
+        None, return height of the entire tree.
+
+        Returns:
+            (int): height of the subtree or else the full tree if position
+                was None
+        """
+        if position is None:
+            position = self.root()
+        return self._height_func(position) # Call the recursive nonpublic
+                                            # height method.
+
+    def depth(self, position):
+        """Return the number of levels separating the Position from tree's
+        root.
+
+        Args:
+            position (Position): Position in the tree
+
+        Returns:
+            (int): int indicating position's height
+        """
+        if self.is_root(position):
+            return 0
+        else:
+            return 1 + self.depth(self.parent(position))
+
     def preorder(self):
-        """Generate a preorder-traversal iteration of positions in the tree.
+        """Generate a preorder-traversal iteration of all positions in the tree.
 
         Yields:
             (Position): The next position in the tree reached by a preorder
@@ -284,7 +322,7 @@ class GeneralTree:
                 yield position
 
     def postorder(self):
-        """Generate a postorder iteration of positions in the tree.
+        """Generate a postorder iteration of all positions in the tree.
 
         Args:
             position (Position): Position object located in this tree.
@@ -297,7 +335,7 @@ class GeneralTree:
                 yield position
 
     def breadthfirst(self):
-        """Generate a breadth-first iteration of the positions in the tree.
+        """Generate a breadth-first iteration of all positions in the tree.
 
         Yields:
             (Position): The next position reached by a breadth-first traversal.
@@ -332,7 +370,6 @@ class GeneralTree:
             yield self._make_position(child) # yield it back as a Position,
                                                 # rather than a _Node
         
-
     def positions(self):
         """
         Generate an iteration of all Positions of the tree. Uses preorder
@@ -372,7 +409,11 @@ class GeneralTree:
     def _subtree_postorder(self, p):
         """Generate a postorder iteration of positions in subtree rooted at
         Position p."""
-        raise NotImplementedError
+        for c in self.children(p): # for each child c
+            for other in self._subtree_postorder(c): # do postorder of child's
+                yield other         # ...subtrees, yielding each subtree to caller
+        yield p # perform visit action "post" recursing over all children
+        
 
 class LinkedQueue:
     """FIFO queue implementation using a singly linked list for storage."""

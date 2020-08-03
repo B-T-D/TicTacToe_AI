@@ -272,12 +272,36 @@ class TestPublicAccessors(unittest.TestCase):
 
     def setUp(self):
         self.tree = GeneralTree()
-        # Create a 4-layer tree with non-uniform numbers of children. 4th layer
-        #   is a single element, all other children of depth 3 are leaves.
         self.root = self.tree._add_root("Root element")
         self.first_child = self.tree._add_child(self.root,
                                                 "First child element")
+        self.large_tree, self.positions = twelve_element_test_tree()
 
+    def test_height(self):
+        """Does the height method correctly return the height of various nodes
+        in the large 12-element test tree?"""
+        # height of root should be 3 (3 levels below it)
+        self.assertEqual(self.large_tree.height(), 3)
+
+        # height of position 2 should be 1:
+        self.assertEqual(self.large_tree.height(self.positions[2]), 1)
+        # height of position 3 should be 2:
+        self.assertEqual(self.large_tree.height(self.positions[3]), 2)
+        # height of a leaf should be 0:
+        self.assertEqual(self.large_tree.height(self.positions[10]), 0)
+
+    def test_depth(self):
+        """Does the depth() method return the correct height for various nodes in
+        the 12-element test tree?"""
+        # depth of root should be 0
+        self.assertEqual(self.large_tree.depth(self.large_tree.root()), 0)
+        # depth of position 2 (first layer child) should be 1
+        self.assertEqual(self.large_tree.depth(self.positions[2]), 1)
+        # depth of position 8 (second layer child) should be 2
+        self.assertEqual(self.large_tree.depth(self.positions[8]), 2)
+        # depth of 12 (third layer child) should be 3
+        self.assertEqual(self.large_tree.depth(self.positions[12]), 3)
+        
     def test_root(self):
         """Does root() return a Position referencing the same node as
         the tree's root?"""
@@ -455,6 +479,22 @@ children from setUp"
         expected_order = [i._node._element for i in self.tree.positions()]
         actual_order = [i for i in self.tree]
         self.assertEqual(actual_order, expected_order)
+
+    def test_subtree_postorder(self):
+        """Does _subtree_postorder yield the tree's elements in the intended
+        order?"""
+        expected_order_elements = set([5, 2, 12, 6, 7, 8, 9, 3, 10, 11, 4, 1])
+        actual_order_elements = set()
+        for position in self.tree._subtree_postorder(self.tree.root()):
+            actual_order_elements.add(position._node._element)
+        self.assertEqual(expected_order_elements, actual_order_elements)
+        
+    def test_postorder(self):
+        """Does postorder yield the tree's elements in the same order as its
+        nonpublic traversal method?"""
+        expected_order = [i for i in self.tree._subtree_postorder(self.tree.root())]
+        actual_order = [i for i in self.tree.postorder()]
+        self.assertEqual(expected_order, actual_order)
 
     def test_breadthfirst(self):
         """Does breadthfirst() yield the tree's Positions in the expected order?"""
