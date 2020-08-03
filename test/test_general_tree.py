@@ -365,6 +365,12 @@ class TestPublicAccessors(unittest.TestCase):
         new_tree = GeneralTree()
         self.assertTrue(new_tree.is_empty())
 
+    def test_parenthesize(self):
+        expected_string = '1 (2 (5), 3 (6 (12), 7, 8, 9), 4 (10, 11))'
+        self.assertEqual(self.large_tree.parenthesize(self.large_tree.root()),
+                         expected_string)
+        
+
 class TestGenerators(unittest.TestCase):
     """Tests for the public methods that generate an iteration, and the nonpublic
     tree-traversal methods they rely on."""

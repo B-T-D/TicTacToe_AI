@@ -413,6 +413,21 @@ class GeneralTree:
             for other in self._subtree_postorder(c): # do postorder of child's
                 yield other         # ...subtrees, yielding each subtree to caller
         yield p # perform visit action "post" recursing over all children
+
+    # ------------------------- visual output methods --------------------------
+    def parenthesize(self, position):
+        """Print parenthetic representation of the subtree rooted at position."""
+        characters = []
+        characters.append(str(position.element()))
+        if not self.is_leaf(position):
+            first_time = True
+            for c in self.children(position):
+                sep = ' (' if first_time else ', '
+                characters.append(sep)
+                first_time = False # any future passes won't be first
+                characters.append(self.parenthesize(c)) # recurse
+            characters.append(')')
+        return ''.join(characters)
         
 
 class LinkedQueue:
