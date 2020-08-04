@@ -1,6 +1,8 @@
 # todo: style intent = shorthand in private methods but not publics. E.g.
 #   "p" vs. "position"
 
+# Mine from tic tac toe, not "official" DSAP
+
 """
 GeneralTree class as well as a LinkedQueue class used for GeneralTree's
 implementation of breadth-first traversal.
@@ -416,7 +418,11 @@ class GeneralTree:
 
     # ------------------------- visual output methods --------------------------
     def parenthesize(self, position):
-        """Print parenthetic representation of the subtree rooted at position."""
+        """Print parenthetic representation of the subtree rooted at position.
+
+        Returns:
+            (str): String representation of the tree.
+        """
         characters = []
         characters.append(str(position.element()))
         if not self.is_leaf(position):

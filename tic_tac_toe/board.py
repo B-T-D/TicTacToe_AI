@@ -1,4 +1,4 @@
-class Board:
+class TicTacToeBoard:
     """Management of a Tic Tac Toe game (doesn't have a computer-player that
     does strategy against a human player).
 
@@ -65,11 +65,16 @@ class Board:
         rows = ['|'.join(str(self._board[r])) for r in range(3)]
         return '\n-----\n'.join(rows)
 
-    def get_board(self):
-        """Public method to return the current board state as a 3 x 3 array."""
+    def board(self):
+        """Public method to return the current board state as a 3 x 3 array.
+
+        Returns:
+            (list): 3 x 3 array representing current state of the tic tac toe board in
+                0 / 1 / 2 notation convention.
+        """
         return self._board
 
-    def get_player(self):
+    def player(self):
         """Public method to return the current player (whose turn it is).
 
         Returns:

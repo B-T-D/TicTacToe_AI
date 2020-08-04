@@ -1,3 +1,6 @@
+"""Tests for GameTree as a general tree implementation as opposed to issues
+more specific to tic tac toe use."""
+
 import unittest
 import random
 
