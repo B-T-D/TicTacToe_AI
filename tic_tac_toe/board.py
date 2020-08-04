@@ -7,11 +7,21 @@ class TicTacToeBoard:
     a single-character string). 
     """
 
-    def __init__(self):
-        """Start a new game."""
-        self._board = [[0] * 3 for j in range(3)] # 3 x 3 2D array of space character strings
-        #   todo: Rename to self._state? The state of the board not the board itself
-        self._player = 1 # X moves first
+    def __init__(self, board=None, player=1):
+        """Start a new game. Allow caller to pass in an existing 3x3 grid
+        representing an in-progress game. Allow caller to specify whether X or O is
+        first-mover player, defaulting to X if not specified.
+
+        Args:
+            board (list): 3 x 3 array of integers 0, 1, or 2.
+        """
+        if board is not None:
+            self._board = board # todo validate board
+        else:
+            self._board = [[0] * 3 for j in range(3)] # 3 x 3 2D array of space character strings
+            #   todo: Rename to "grid" or "squares"
+        self._player = player
+        # todo validate that player is either 1 or 2, fail immediately if player is e.g. 7
 
     def mark(self, row: int, col: int) -> None:
         """Put set value to 1 or 2 at position (row, col) for next player's turn.
@@ -65,7 +75,7 @@ class TicTacToeBoard:
         rows = ['|'.join(str(self._board[r])) for r in range(3)]
         return '\n-----\n'.join(rows)
 
-    def board(self):
+    def board(self) -> list:
         """Public method to return the current board state as a 3 x 3 array.
 
         Returns:
@@ -81,3 +91,11 @@ class TicTacToeBoard:
             (int): 1 if it's X's turn to move, 2 if O's
         """
         return self._player
+
+    def opponent(self):
+        """Return non-mover opponent of the current player.
+
+        Returns:
+            (int): 1 if non-mover player is 'X', 2 if 'O'
+        """
+        return 2 if self.player() == 1 else 1

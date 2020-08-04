@@ -1,6 +1,6 @@
 import unittest
 
-from tic_tac_toe.board import Board
+from tic_tac_toe.board import TicTacToeBoard
 
 class TestBoardInit(unittest.TestCase):
     """Tests to confirm correct initialization of a Board object."""
@@ -8,18 +8,29 @@ class TestBoardInit(unittest.TestCase):
     def test_init(self):
         """Test that the string representation of a blank board is a 2D array
         of 3 rows by 3 columns, with each element an int with value zero."""
-        board = Board()
+        board = TicTacToeBoard()
         actual_boardstate = board._board
         expected_boardstate = [[0, 0, 0],
                                [0, 0, 0],
                                [0, 0, 0]] 
         self.assertEqual(actual_boardstate, expected_boardstate)
 
+    def test_init_existing_board(self):
+        """Does the constructor accept an existing 3 x 3 grid and construct
+        a board object with that instead of initializing a blank grid?"""
+        in_progress = [
+            [1, 2, 0],
+            [0, 1, 0],
+            [0, 2, 1]
+        ]
+        board = TicTacToeBoard(board=in_progress)
+        self.assertEqual(in_progress, board._board)
+
 class TestMark(unittest.TestCase):
     """Tests for the Board.mark() method."""
 
     def setUp(self):
-        self.board = Board()
+        self.board = TicTacToeBoard()
 
     def test_mark_one(self):
         """Mark an X or O on the center square."""
@@ -58,7 +69,7 @@ class TestMark(unittest.TestCase):
     def test_game_already_complete(self):
         """Confirm ValueError if one player has already won."""
         # Create simplified game-over board that wouldn't be legal in TTT rules
-        gameover_board = Board()
+        gameover_board = TicTacToeBoard()
         gameover_board._board = [[1, 0, 0],
                                  [0, 1, 0],
                                  [0, 0, 1]]
@@ -73,7 +84,7 @@ class TestIsWin(unittest.TestCase):
     """Test all 8 possible winning configurations of the board."""
 
     def setUp(self):
-        self.board = Board()
+        self.board = TicTacToeBoard()
 
     def test_illegal_wins(self):
         """Expedient tests for non-legal boardstates."""
@@ -119,7 +130,7 @@ class TestBoard(unittest.TestCase):
     caller code."""
 
     def test_board(self):
-        board = Board().get_board()
+        board = TicTacToeBoard().board()
         self.assertIsInstance(board, list)
         expected_list = [[0, 0, 0],
                          [0, 0, 0],

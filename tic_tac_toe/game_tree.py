@@ -1,4 +1,4 @@
-from tic_tac_toe.general_tree import GeneralTree
+from tic_tac_toe.general_tree import GeneralTree, LinkedQueue
 from tic_tac_toe.board import TicTacToeBoard
 
 import copy
@@ -20,23 +20,52 @@ class GameTree(GeneralTree):
         corner, etc.).
 
         Args:
+            postion (Position): Position that will be root of the subtree
             player (int): 1 if X will move first, 2 if O.
 
         Returns:
             None
         """
         # todo probably won't be needed once things more sorted out
+        qpos = LinkedQueue() # shorthand for "queued positions". The queue will store new positions
+        # in the order they were added.
+        start_player = player # Store for expedient player-identification when deeper in tree
+        qpos.enqueue(position)
 
-        self._build_layer(self.root(), player)
-        prev_children = [c for c in self.children(self.root())]
-        player = self._swap_player(player)
-        for child in self.children(self.root()):
-            self._build_layer(child, player)
-        player = self._swap_player(player)
-        for c in prev_children:
-            print(f"root-child c has {self.num_children(c)} children")
-            print(f"root-child c has element board {c.element()[0]}")
-            self._build_layer(c, player)
+        while not qpos.is_empty():
+            parent = qpos.dequeue()
+            board = parent.element()[0]
+
+            for i in range(3): # This would be O(n^2) for n = gridsquares in the board.
+                                # For now we can assume always a 3 x 3 board, not
+                                #   an arbitrarily large one.
+                            # If you're iterating over a square (the board),
+                                # you'll have a 'square' looking loop nesting;
+                                #   a square is rows * columns.
+                for j in range(3):
+                    if board[i][j] == 0: # if blank square available for marking
+                        child_board = copy.deepcopy(board)
+                        if self.depth(parent) % 2 == 1: # odd-numbered layer in this subtree
+                            player = self._swap_player(start_player) # ...means it's start_player's opponent's turn.
+                        else:
+                            player = start_player
+                        child_board[i][j] = player # mark the board
+                        child_element = (child_board, 0) # implementation housekeeping for ._element tuple
+                        new_pos = self._add_child(parent, child_element)
+                        qpos.enqueue(new_pos)
+
+
+
+        # self._build_layer(self.root(), player)
+        # prev_children = [c for c in self.children(self.root())]
+        # player = self._swap_player(player)
+        # for child in self.children(self.root()):
+        #     self._build_layer(child, player)
+        # player = self._swap_player(player)
+        # for c in prev_children:
+        #     print(f"root-child c has {self.num_children(c)} children")
+        #     print(f"root-child c has element board {c.element()[0]}")
+        #     self._build_layer(c, player)
 
 
         # self._build_layer(position, player)
@@ -136,7 +165,7 @@ class GameTree(GeneralTree):
         """
         raise NotImplementedError
 
-    def compute_value(self, position):
+    def compute_score(self, position) -> int:
         """Return the value of the node at position to appropriate int value to the caller.
         
         If node is a leaf, assign 1 for player-win, 0 for draw, -1 for
@@ -145,28 +174,61 @@ class GameTree(GeneralTree):
         """
         # Recursive implementation here is a nonfunctional mess, but this should be the conceptual
         #   essence of the minimax algorithm. 
-        node = self._validate
-        if node.is_leaf(): # base case
-            winner = node._element._board.winner()
-            if winner == player:
+        node = self._validate(position)
+        if self.is_leaf(position): # base case
+            winner = position.element().winner()
+            if winner == position.element().player(): # what .player() returns at this point in execution
+                                                        # is actually the opponent of who just moved.
+                                                        # player() tells the caller "after the most recent .mark()
+                                                        # call placed a mark, it became this person's turn:".
+                                                        # If X places a mark with a .mark() call, and wins, the
+                                                        # ._player attribute of the TicTacToeBoard that returns X
+                                                        # for .winner() is O, not X.
+
+                                                        # Here, position.element().player() isn't necessarily
+                                                        # the player running the minimax algorithm. It's the
+                                                        # player who would get to move next if this node
+                                                        # weren't a gameover leaf.
+
+                                                        # ".player()" might be better named "mover".
+                print("-------REturned from first if condition")
                 return 1
-            elif winner == opponent:
+            elif winner == position.element().opponent(): # "opponent" here means the original minimax caller
+                print("-------------returned from elif")
                 return -1
             else: # value should be none
+                print("-----------Returned from else----------------")
                 return 0 # if it's a leaf and board.winner() returns None, that should indicate
                         #   a tie (rather than an incomplete game).
         # Need to call depth() here I think, because need to alternate min and maxing with each
         #   layer of children you recurse through.
-        elif depth % 2 == 0: # max at even numbered layers
-            child_values = [compute_value(i) for i in position.children()]
+        elif self.depth(position) % 2 == 0: # max at even numbered layers
+            child_values = [self.compute_score(i) for i in self.children(position)]
             return max(child_values) # collapse to one liner max(listcomp) if this is correct
                  # compare with recursive delete for how to iterate children while recursing
-        elif depth % 2 == 1: # min at odd numbered layers
-            return(min(compute_value(children)))
+        elif self.depth(position) % 2 == 1: # min at odd numbered layers
+            child_values = [self.compute_score(i) for i in self.children(position)]
+            return(min(child_values))
 
-def test():
-    print("hello world from game_tree")
+    def _add_unmarked_child(self, position):
+        """
+        Add a child of position, which child's element being a not-yet-marked
+        copy of the board stored at parent position.
 
+        Args:
+            position (Position): Position object with a TicTacToeBoard object
+                as its element.
 
-if __name__ == '__main__':
-    test()
+        Returns:
+            (Position): Position object for the new child node.
+        """
+        # Make a deepcopy of the underlying 3x3 grid:
+        grid_copy = copy.deepcopy(position.element().board())
+        # Use that copy to make a new TicTacToeBoard object that starts with
+        #   same values in its grid, and with its player set to parent
+        #   position's player:
+        board_copy = TicTacToeBoard(board=grid_copy,
+                                    player=position.element().player())
+                                    # player shouldn't be flipped yet because it flips when .mark() is called
+        return self._add_child(position, board_copy)
+

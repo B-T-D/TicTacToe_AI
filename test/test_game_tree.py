@@ -1,5 +1,6 @@
 import unittest
 
+import copy
 
 from tic_tac_toe.game_tree import GameTree
 from tic_tac_toe.board import TicTacToeBoard
@@ -52,8 +53,6 @@ class TestBuildLayer(unittest.TestCase):
         self.assertTrue(self.tree.is_leaf(self.tree.root()))
 
 
-
-
 class TestBuildDumbTree(unittest.TestCase):
     """Tests for the method that builds a tree of all 250 possible legal
     board configurations."""
@@ -63,7 +62,7 @@ class TestBuildDumbTree(unittest.TestCase):
         blank_board = TicTacToeBoard().board()
         self.tree._add_root((blank_board, 0))
 
-        self.tree.build_dumb_tree(self.tree.root(), player=1)
+        #self.tree.build_dumb_tree(self.tree.root(), player=1)
 
     def test_root_board(self):
         """Root's board should be blank."""
@@ -73,14 +72,14 @@ class TestBuildDumbTree(unittest.TestCase):
         actual = self.tree.root().element()[0]
         self.assertEqual(actual, expected)
 
-    def test_tree_size(self):
-        """Are there 250 total positions in the tree?"""
-        expected = 250
-        actual = len(self.tree)
-        self.assertEqual(expected, actual)
+    # def test_tree_size(self):
+    #     """Are there 250 total positions in the tree?"""
+    #     expected = 250
+    #     actual = len(self.tree)
+    #     self.assertEqual(expected, actual)
 
-    def testplaceholder(self):
-        self.tree.parenthesize(self.tree.root())
+    # def testplaceholder(self):
+    #     self.tree.parenthesize(self.tree.root())
 
 class TestMiscSimpleMethods(unittest.TestCase):
 
@@ -90,6 +89,51 @@ class TestMiscSimpleMethods(unittest.TestCase):
     def test_swap_player(self):
         self.assertEqual(2, self.tree._swap_player(1))
         self.assertEqual(1, self.tree._swap_player(2))
+
+class TestAddUnmarkedChild(unittest.TestCase):
+    """Tests for the method that adds a copy of the parent's board as a
+    child."""
+
+    def setUp(self):
+        self.tree = GameTree()
+
+class TestTwoMarksOnRoot(unittest.TestCase): # todo intended this to be a subclass of TestUnmarkedChild; unittest wouldn't run the nested tests
+    """Case where position arg is root with in-progress marks on it
+    and active player is 2."""
+
+    def setUp(self):
+        self.tree = GameTree()
+        self.player = 2
+        self.original_grid = [
+            [1,0,1],
+            [0,2,0],
+            [0,0,0]
+        ]
+        self.grid = copy.deepcopy(self.original_grid)
+        self.tree._add_root(TicTacToeBoard(board=self.grid,
+                                           player=self.player))
+        self.child_0_0 = self.tree._add_unmarked_child(self.tree.root())
+
+    def test_correct_grid_value(self):
+        self.assertEqual(self.grid, self.child_0_0.element().board())
+
+    def test_correct_player_value(self):
+        self.assertEqual(self.player, self.child_0_0.element().player())
+
+    def test_marking_child_grid_does_not_mark_parent_grid(self):
+        """Does calling board's .mark() method on the child grid leave
+        parent's grid unaffected?"""
+        board_to_mark = self.child_0_0.element()
+        board_to_mark.mark(0,1)
+        expected_new_grid = [
+            [1, 2, 1],
+            [0, 2, 0],
+            [0, 0, 0]
+        ]
+        self.assertEqual(self.original_grid, self.grid)
+        self.assertEqual(expected_new_grid, self.child_0_0.element().board())
+
+
 
 if __name__ == '__main__':
     unittest.main()
