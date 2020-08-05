@@ -9,7 +9,7 @@ class TestBoardInit(unittest.TestCase):
         """Test that the string representation of a blank board is a 2D array
         of 3 rows by 3 columns, with each element an int with value zero."""
         board = TicTacToeBoard()
-        actual_boardstate = board._board
+        actual_boardstate = board._grid
         expected_boardstate = [[0, 0, 0],
                                [0, 0, 0],
                                [0, 0, 0]] 
@@ -23,8 +23,8 @@ class TestBoardInit(unittest.TestCase):
             [0, 1, 0],
             [0, 2, 1]
         ]
-        board = TicTacToeBoard(board=in_progress)
-        self.assertEqual(in_progress, board._board)
+        board = TicTacToeBoard(grid=in_progress)
+        self.assertEqual(in_progress, board._grid)
 
 class TestMark(unittest.TestCase):
     """Tests for the Board.mark() method."""
@@ -36,7 +36,7 @@ class TestMark(unittest.TestCase):
         """Mark an X or O on the center square."""
         # Player should be 'X' after init, X moves first.
         self.board.mark(row=1, col=1)
-        actual_boardstate = self.board._board
+        actual_boardstate = self.board._grid
         expected_boardstate = [[0, 0, 0],
                                [0, 1, 0],
                                [0, 0, 0]]
@@ -48,7 +48,7 @@ class TestMark(unittest.TestCase):
         self.board.mark(row=1, col=1)
         self.board.mark(row=0, col=0) # O attempts "fork" by playing in a corner
                                         # that has two potential win routes open
-        actual_boardstate = self.board._board
+        actual_boardstate = self.board._grid
         expected_boardstate = [[2, 0, 0],
                                [0, 1, 0],
                                [0, 0, 0]]
@@ -70,9 +70,9 @@ class TestMark(unittest.TestCase):
         """Confirm ValueError if one player has already won."""
         # Create simplified game-over board that wouldn't be legal in TTT rules
         gameover_board = TicTacToeBoard()
-        gameover_board._board = [[1, 0, 0],
-                                 [0, 1, 0],
-                                 [0, 0, 1]]
+        gameover_board._grid = [[1, 0, 0],
+                                [0, 1, 0],
+                                [0, 0, 1]]
         assert gameover_board._is_win(1) == True # interrupt execution if _is_win
                                                 # method not working, since
                                                 # that's not what we're testing
@@ -88,9 +88,9 @@ class TestIsWin(unittest.TestCase):
 
     def test_illegal_wins(self):
         """Expedient tests for non-legal boardstates."""
-        self.board._board = [[0, 0, 0],
-                             [0, 0, 0],
-                             [0, 0, 0]]
+        self.board._grid = [[0, 0, 0],
+                            [0, 0, 0],
+                            [0, 0, 0]]
         p = 1 # shorthand for "player"
         for player in [1, 2]:
             p = player
@@ -122,7 +122,7 @@ class TestIsWin(unittest.TestCase):
                 }
             assert len(boardstates) == 8 # double check dict generated ok
             for win_state in boardstates:
-                self.board._board = boardstates[win_state]
+                self.board._grid = boardstates[win_state]
                 self.assertTrue(self.board._is_win(p))
 
 class TestBoard(unittest.TestCase):
@@ -136,6 +136,27 @@ class TestBoard(unittest.TestCase):
                          [0, 0, 0],
                          [0, 0, 0]]
         self.assertEqual(board, expected_list)
-    
+
+class TestSimpleMethods(unittest.TestCase):
+    """Tests for simple methods that can share a single simple test case."""
+
+    def setUp(self):
+        grid = [
+                [1, 2, 0],
+                [0, 1, 0],
+                [0, 2, 1]
+            ]
+        self.board = TicTacToeBoard(grid=grid)
+
+    def test_str(self): # todo brittle
+        """Tests for the __str__ method."""
+        expected_string = "  X  |  O  |     \n------------------\n" \
+                          "     |  X  |     \n------------------\n" \
+                          "     |  O  |  X  "
+        actual_string = str(self.board)
+        print(actual_string)
+        self.assertEqual(expected_string, actual_string)
+
+
 if __name__ == '__main__':
     unittest.main()

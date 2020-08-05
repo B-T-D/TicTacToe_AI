@@ -7,18 +7,18 @@ class TicTacToeBoard:
     a single-character string). 
     """
 
-    def __init__(self, board=None, player=1):
+    def __init__(self, grid=None, player=1):
         """Start a new game. Allow caller to pass in an existing 3x3 grid
         representing an in-progress game. Allow caller to specify whether X or O is
         first-mover player, defaulting to X if not specified.
 
         Args:
-            board (list): 3 x 3 array of integers 0, 1, or 2.
+            grid (list): 3 x 3 array of integers 0, 1, or 2.
         """
-        if board is not None:
-            self._board = board # todo validate board
+        if grid is not None:
+            self._grid = grid # todo validate board
         else:
-            self._board = [[0] * 3 for j in range(3)] # 3 x 3 2D array of space character strings
+            self._grid = [[0] * 3 for j in range(3)] # 3 x 3 2D array of space character strings
             #   todo: Rename to "grid" or "squares"
         self._player = player
         # todo validate that player is either 1 or 2, fail immediately if player is e.g. 7
@@ -29,11 +29,11 @@ class TicTacToeBoard:
         """
         if not (0 <= row <= 2 and 0 <= col <= 2):
             raise ValueError('Invalid board position')
-        if self._board[row][col] != 0: # if there's already a mark at that square
+        if self._grid[row][col] != 0: # if there's already a mark at that square
             raise ValueError('Board position occupied')
         if self.winner() is not None:
             raise ValueError('Game is already complete')
-        self._board[row][col] = self._player
+        self._grid[row][col] = self._player
         if self._player == 1: # swap the active player
             self._player = 2
         else:
@@ -51,7 +51,7 @@ class TicTacToeBoard:
                 current player, else False.
         """
 
-        board = self._board # local variable for code compactness here
+        board = self._grid # local variable for code compactness here
         # (authors are manually checking all 8 of the possible ways you could
         #   get three in a row--2 diagonals + 3 full-row + 3 full-column = 8.
         return (mark == board[0][0] == board[0][1] == board[0][2] or    # row 0
@@ -72,8 +72,29 @@ class TicTacToeBoard:
 
     def __str__(self):
         """Return string representation of the board in its current state."""
-        rows = ['|'.join(str(self._board[r])) for r in range(3)]
-        return '\n-----\n'.join(rows)
+        rows = []
+        for r in range(3):
+            row = self._grid[r].copy()
+            for i in range(3):
+                if row[i] == 1:
+                    row[i] = "X"
+                elif row[i] == 2:
+                    row[i] = "O"
+                else:
+                    row[i] = ''
+            rows.append(row)
+        colwidth = 5
+        print_rows = []
+        print_string = []
+        for r in range(3):
+            rowstring =\
+                f"{rows[r][0]:^{colwidth}}|{rows[r][1]:^{colwidth}}|{rows[r][2]:^{colwidth}}"
+            print_rows.append(rowstring)
+        for string in print_rows:
+            print_string.append(row)
+        return '\n------------------\n'.join(print_rows)
+
+
 
     def board(self) -> list:
         """Public method to return the current board state as a 3 x 3 array.
@@ -82,7 +103,7 @@ class TicTacToeBoard:
             (list): 3 x 3 array representing current state of the tic tac toe board in
                 0 / 1 / 2 notation convention.
         """
-        return self._board
+        return self._grid
 
     def player(self):
         """Public method to return the current player (whose turn it is).
