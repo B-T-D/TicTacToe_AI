@@ -110,7 +110,7 @@ class TestTwoMarksOnRoot(unittest.TestCase): # todo intended this to be a subcla
             [0,0,0]
         ]
         self.grid = copy.deepcopy(self.original_grid)
-        self.tree._add_root(TicTacToeBoard(board=self.grid,
+        self.tree._add_root(TicTacToeBoard(grid=self.grid,
                                            player=self.player))
         self.child_0_0 = self.tree._add_unmarked_child(self.tree.root())
 

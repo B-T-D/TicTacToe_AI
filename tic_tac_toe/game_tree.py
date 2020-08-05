@@ -225,7 +225,7 @@ class GameTree(GeneralTree):
         # Use that copy to make a new TicTacToeBoard object that starts with
         #   same values in its grid, and with its player set to parent
         #   position's player:
-        board_copy = TicTacToeBoard(board=grid_copy,
+        board_copy = TicTacToeBoard(grid=grid_copy,
                                     player=position.element().player())
                                     # player shouldn't be flipped yet because it flips when .mark() is called
         return self._add_child(position, board_copy)

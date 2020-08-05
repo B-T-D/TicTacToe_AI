@@ -26,7 +26,7 @@ class TestSinglePositionTreeXWin(unittest.TestCase):
         self.board.mark(0,1)
         self.board.mark(2,2)
 
-        assert self.board._board == end_board
+        assert self.board._grid == end_board
         assert self.board.winner() == 1
 
         # Make a root in self.tree with self.board as its element
@@ -63,7 +63,7 @@ class TestSinglePositionTreeOWin(unittest.TestCase):
         self.board.mark(0,1)
         self.board.mark(2,2)
 
-        assert self.board._board == end_board
+        assert self.board._grid == end_board
         assert self.board.winner() == 2
 
         # Make a root in self.tree with self.board as its element
@@ -112,11 +112,11 @@ class TestThreePositionTreeDrawWinLose(unittest.TestCase):
         O_win_board = TicTacToeBoard(player)
         draw_board = TicTacToeBoard(player)
 
-        X_win_board._board = X_win
+        X_win_board._grid = X_win
         assert X_win_board.winner() == 1
-        O_win_board._board = O_win
+        O_win_board._grid = O_win
         assert O_win_board.winner() == 2
-        draw_board._board = draw
+        draw_board._grid = draw
         assert draw_board.winner() is None
 
         # make a root with a blank board
