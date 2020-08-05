@@ -117,7 +117,7 @@ class TestThreePositionTreeDrawWinLose(unittest.TestCase):
         O_win_board._grid = O_win
         assert O_win_board.winner() == 2
         draw_board._grid = draw
-        assert draw_board.winner() is None
+        assert draw_board.winner() == 3
 
         # make a root with a blank board
         self.tree._add_root(TicTacToeBoard(player=2)) # opposite of ._player on the child boards
@@ -178,7 +178,7 @@ class TestMultiLayerTree(unittest.TestCase):
         #   in the last blank square and causes a draw.
         self.child_1_1 = self.tree._add_unmarked_child(self.child_0_1)
         self.child_1_1.element().mark(2,2) # send X's mark.
-        assert self.child_1_1.element().winner() == None, f"winner is {self.child_1_0.element().winner()}"
+        assert self.child_1_1.element().winner() == 3, f"winner is {self.child_1_1.element().winner()}"
 
         # Tree should now be 5 positions total
         assert len(self.tree) == 5

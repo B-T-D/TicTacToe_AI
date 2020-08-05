@@ -8,10 +8,69 @@ class GameTree(GeneralTree):
 
     class _Node(GeneralTree._Node): # override GeneralTree's _Node class
 
-        def __init__(self, element, parent=None, children=None):
+        def __init__(self, element, parent=None, children=None,
+                     move=None, score=None):
+            """
+
+            :param element (TicTacToeBoard): a TicTacToeBoard object
+            :param parent:
+            :param children:
+            :param move: The move that produced this node's boardstate, else
+                None for a blank board.
+            :param score: This node's score as computed by the minimax method,
+                else None.
+            """
+            # todo: What about __slots__? That won't have move and score.
             super().__init__(element, parent, children)
+            self._move = move
+            self._score = score
 
         # TODO should score initialize to None? See if 0 causes minimax implementation probs
+
+    class Position(GeneralTree.Position):
+        """Extensions to inherited Position nested-class to support accessor
+        methods for Node._move and Node._score."""
+
+        def __init__(self, container, node): # No changes. Move and score are
+                                            #   encapsulated within object that's
+                                            #   passed as node arg.
+            super().__init__(container, node)
+
+        def move(self):
+            """Return the move that resulted in the creation of the boardstate
+            stored at this position. For example, if the Position stores
+            a boardstate representing X moving first by marking (0,1),
+            Position.move() will return (0, 1).
+
+            Returns:
+                (tuple): Two-element (row, column) tuple representing coordinates
+                    of a square on the TicTacToeBoard.
+            """
+            return self._node._move
+
+        def score(self):
+            """Return the minimax score of the boardstate stored at this
+            Position.
+
+            Returns:
+                (int): -1, 0, or 1.
+            """
+            return self._node._score
+
+    # Haven't actually needed to override GeneralTree's __init__, yet.
+
+    def _add_root(self, element, move=None, score=None):
+        """Override of inherited method to support adding move and score in addition
+        to element."""
+        # todo seemed most expedient not to try to integrate a super() call to
+        #   the inherited _add_root, because it tangles into the GeneralTree's
+        #   make_position and calls GeneralTree's Position constructor instead.
+        if self._root is not None:
+            raise ValueError('Root exists')
+        self._size = 1
+        self._root = self._Node(element, move, score)
+        return self._make_position(self._root)
+
 
     def build_dumb_tree(self, position, player):
         """Build a redundant tree of all possible moves in a game, ignoring
@@ -108,61 +167,10 @@ class GameTree(GeneralTree):
                     children_added = True
         return children_added
 
-    def _swap_player(self, player):
-        return 2 if player == 1 else 1
-
-    def legal_moves(self, board, player):
-        """
-        Return a list of all legal moves available to player based on current
-        state of board.
-
-        Args:
-            board (list): 3 x 3 array of representing a tic tac toe board in
-                0 / 1 / 2 notation convention.
-            player (int): 1 or 2 corresponding to which player's turn it is.
-        
-        Returns:
-            (list): List of two-element tuples representing the (row, col)
-                coordinates at which player could legally place a mark on the
-                next turn.
-        """
-        # caller will call this with
-        #   mygametree.legal_moves(myboard.board(), myboard.player()
-        raise NotImplementedError
-
-    def check_tie(self, board, player):
-        """
-        Return True if no possible legal moves on board allow either player
-        to win, else False."""
-        raise NotImplementedError
-
     def optimal_move(self, board, player):
         """
         Return the optimal next move for player based on state of board, as a
         two-element (row, column) tuple."""
-        raise NotImplementedError
-
-    def build_essentially_different_moves():
-        """Build subtree of all essentially different moves. All legal moves,
-        excluding moves that could be made by rotations and reflections of an
-        already known legal move."""
-        raise NotImplementedError
-
-    def _validate_board(self, board):
-        """
-        Validate that board is a 3x3 two-dimensional array with each element
-        equal to one of 0, 1, or 2. Return board if valid, else raise an
-        error to the caller.
-        """
-        raise NotImplementedError
-
-    def _validate_element(self, e):
-        """
-        Validate that e is a valid element: a two-element tuple of
-        (board: list, score: int).
-        :param board:
-        :return:
-        """
         raise NotImplementedError
 
     def compute_score(self, position) -> int:
@@ -229,4 +237,90 @@ class GameTree(GeneralTree):
                                     player=position.element().player())
                                     # player shouldn't be flipped yet because it flips when .mark() is called
         return self._add_child(position, board_copy)
+
+    def _add_marked_child(self, position, move: tuple):
+        """
+        Add child of position and apply move to it.
+
+        Args:
+            position(Position): Position in this tree with a TicTacToeBoard
+                object as its element.
+            move (tuple): (row, coordinate) tuple.
+
+        Returns:
+                (Position): Position object for the new child node.
+
+        """
+        raise NotImplementedError
+
+    def _possible_moves(self, position):
+        """
+        Return a list of tuples representing the possible moves from
+        position's boardstate.
+
+        Args:
+            position (Position): Position in this tree with TicTacToeBoard
+                object as its element.
+
+        Returns:
+            (list): List of (row, column) tuples
+        """
+        raise NotImplementedError
+
+    def _build_children(self, position):
+        """
+        Build children of position, one child for each of position's possible
+        moves.
+
+        Args:
+            position (Position): Position in this tree with TicTacToeBoard
+                object as its element.
+
+        Returns:
+            None
+        """
+        raise NotImplementedError
+
+    def _build_tree(self, position): # todo collapse into or only call from __init__
+        """
+        Build subtree of all possible boardstates reachable from position's
+        boardstate.
+
+        Args:
+            position (Position): Position in this tree with TicTacToeBoard
+                as its element. Defaults to root.
+        """
+
+        raise NotImplementedError
+
+    def _score_subtree(self, position):
+        """
+        Update the score attribute for the node at each Position in the
+        subtree rooted at Position.
+
+        Args:
+            position (Position): Position in this tree with TicTacToeBoard
+                as its element. Defaults to root.
+        Returns:
+            None
+        """
+        # todo tests should confirm this (and any other visit-action) methods
+        #   are breadth first
+        raise NotImplementedError
+
+    def _subtree_optimal_move(self, position):
+        """
+        Return the optimal move coordinates for position's boardstate. Meant
+            to be called with self.root() as the position argument.
+
+        Args:
+            position (Position): Position in this tree with TicTacToeBoard
+                as its element. Defaults to root.
+
+        Returns:
+              (tuple): (row, column) tuple representing the optimal move.
+        """
+        raise NotImplementedError
+
+
 

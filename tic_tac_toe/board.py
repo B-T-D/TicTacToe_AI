@@ -27,6 +27,7 @@ class TicTacToeBoard:
         """Put set value to 1 or 2 at position (row, col) for next player's turn.
 
         """
+        # todo support callers passing a tuple
         if not (0 <= row <= 2 and 0 <= col <= 2):
             raise ValueError('Invalid board position')
         if self._grid[row][col] != 0: # if there's already a mark at that square

@@ -126,7 +126,7 @@ class GeneralTree:
             e (object): Element to be stored at root.
 
         Returns:
-            (Position): New Position object represnting tree's root.
+            (Position): New Position object representing tree's root.
         """
         if self._root is not None:
             raise ValueError('Root exists')
