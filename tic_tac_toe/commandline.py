@@ -1,4 +1,4 @@
-import board as bd
+from tic_tac_toe.board import TicTacToeBoard
 
 class CLIBoard:
     """Implements command line interface for the tic tac toe game."""

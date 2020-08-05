@@ -172,8 +172,6 @@ class GameTree(GeneralTree):
         opponent win. If node not leaf, take the min or max of the value returned
         by recursively calling compute_value() on each of position's children.
         """
-        # Recursive implementation here is a nonfunctional mess, but this should be the conceptual
-        #   essence of the minimax algorithm. 
         node = self._validate(position)
         if self.is_leaf(position): # base case
             winner = position.element().winner()
