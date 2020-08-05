@@ -154,9 +154,15 @@ class TestSimpleMethods(unittest.TestCase):
                           "     |  X  |     \n------------------\n" \
                           "     |  O  |  X  "
         actual_string = str(self.board)
-        print(actual_string)
         self.assertEqual(expected_string, actual_string)
 
+    def test_opponent(self):
+        """Test the method that returns opponent of the current mover-player."""
+        new_board = TicTacToeBoard()
+        assert new_board.player() == 1 # should have instantiated with X as default first mover
+        self.assertEqual(2, new_board.opponent())
+        new_board.mark(2,0) # Send a move to the board to flip player
+        self.assertEqual(1, new_board.opponent())
 
 if __name__ == '__main__':
     unittest.main()
