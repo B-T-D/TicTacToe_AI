@@ -189,7 +189,7 @@ class GameTree(GeneralTree):
                                                         # weren't a gameover leaf.
 
                                                         # ".player()" might be better named "mover".
-                print("-------REturned from first if condition")
+                print("-------Returned from first if condition")
                 return 1
             elif winner == position.element().opponent(): # "opponent" here means the original minimax caller
                 print("-------------returned from elif")

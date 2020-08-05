@@ -4,6 +4,9 @@
     <list default="true" id="5f3ea001-c4cd-448d-91b2-76237f7d8f4a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_board.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tic_tac_toe/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/board.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tic_tac_toe/commandline.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/commandline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tic_tac_toe/game_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/game_tree.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

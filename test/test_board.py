@@ -125,6 +125,20 @@ class TestIsWin(unittest.TestCase):
                 self.board._grid = boardstates[win_state]
                 self.assertTrue(self.board._is_win(p))
 
+class TestWinner(unittest.TestCase):
+    """Tests for public winner() method."""
+
+    def test_identify_draw(self):
+        """Does the method return 3 to indicate a draw when called on
+        TicTacToeBoard object with no winner and no remaining empty squares?"""
+        grid = [
+            [1,2,1],
+            [1,2,2],
+            [2,1,1]
+        ]
+        board = TicTacToeBoard(grid=grid)
+        self.assertEqual(3, board.winner())
+
 class TestBoard(unittest.TestCase):
     """Tests for the public get_board() method that returns the board to outside
     caller code."""

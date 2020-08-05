@@ -64,10 +64,15 @@ class TicTacToeBoard:
                 mark == board[0][2] == board[1][1] == board[2][0])      # rev diag
 
     def winner(self):
-        """Return mark of winning player, or None to indicate a tie."""
+        """Return mark of winning player, 3 to indicate a tie, None to if
+        game in progress."""
         for mark in [1, 2]:
             if self._is_win(mark):
                 return mark
+        if 0 not in self._grid[0]: # If no blank squares
+            if 0 not in self._grid[1]: # Don't check more rows if already found a blank square
+                if 0 not in self._grid[2]:
+                    return 3
         return None
 
     def __str__(self):
