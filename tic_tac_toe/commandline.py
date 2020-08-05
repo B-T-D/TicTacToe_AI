@@ -4,8 +4,8 @@ class CLIBoard:
     """Implements command line interface for the tic tac toe game."""
 
     def __init__(self):
-        self._board = bd.Board()
-        self._state = self._board.get_board()
+        self._board = TicTacToeBoard()
+        self._state = self._board.board()
 
     def _intboard_to_string(self):
         """Translate (0, 1, 2) notation to ('', 'X', 'O').
@@ -46,14 +46,8 @@ class CLIBoard:
     def refresh_board(self):
         """Output the current boardstate to command line in a format that's
         useful for a human player."""
-        if self._board.get_player() == 1:
-            player = "X"
-        else:
-            player = "O"
-        print(f"{player}'s turn")
-        board_out = self._intboard_to_string()
-        rows = [('|').join(board_out[r]) for r in range(3)]
-        print('\n----\n'.join(rows))
+        print(f"{self._board.player()}'s turn")
+        print(self._board)
 
     def get_mark_input(self):
         """Get player input of a location at which to place a new mark on the
