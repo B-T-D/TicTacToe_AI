@@ -169,20 +169,20 @@ class TestMultiLayerTree(unittest.TestCase):
 
         # add a depth=1 child where O marks in the bottom right corner
         self.child_0_0 = self.tree._add_unmarked_child(self.tree.root())
-        self.child_0_0.element().mark(2,2) # send O's mark
+        self.child_0_0.element().mark(2, 2) # send O's mark
         # add that child's sole possible child--board where x plays in the last
         #   remaining blank square and wins.
         self.child_1_0 = self.tree._add_unmarked_child(self.child_0_0)
-        self.child_1_0.element().mark(2,0) # send X's mark
+        self.child_1_0.element().mark(2, 0) # send X's mark
         assert self.child_1_0.element().winner() == 1 # confirm X won.
 
         # add second depth=1 child where O marks in the bottom left corner
         self.child_0_1 = self.tree._add_unmarked_child(self.tree.root())
-        self.child_0_1.element().mark(2,0)
+        self.child_0_1.element().mark(2, 0)
         # add this child's sole possible child at depth=2--board where X plays
         #   in the last blank square and causes a draw.
         self.child_1_1 = self.tree._add_unmarked_child(self.child_0_1)
-        self.child_1_1.element().mark(2,2) # send X's mark.
+        self.child_1_1.element().mark(2, 2) # send X's mark.
         assert self.child_1_1.element().winner() == 3, f"winner is {self.child_1_1.element().winner()}"
 
         # Tree should now be 5 positions total

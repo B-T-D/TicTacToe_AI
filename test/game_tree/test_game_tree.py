@@ -174,7 +174,7 @@ class TestAddUnmarkedChildTwoMarksOnRoot(unittest.TestCase): # todo intended thi
         """Does calling board's .mark() method on the child grid leave
         parent's grid unaffected?"""
         board_to_mark = self.child_0_0.element()
-        board_to_mark.mark(0,1)
+        board_to_mark.mark(0, 1)
         expected_new_grid = [
             [1, 2, 1],
             [0, 2, 0],
