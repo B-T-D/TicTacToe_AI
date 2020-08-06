@@ -7,7 +7,7 @@ class TestInit(unittest.TestCase):
 
 class TestGetComputerMove(unittest.TestCase):
 
-
+    pass
 
 if __name__ == '__main__':
     unittest.main()

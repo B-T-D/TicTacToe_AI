@@ -427,7 +427,6 @@ class TestOptimalMove(unittest.TestCase):
         board = TicTacToeBoard() # blank board with player X
         expected_moves = [(0, 0), (0, 2), (2, 0), (2, 2)] # one of the corners
         move = tree.optimal_move(board)
-        print(f"***************suggested first move: **************\n\t{move}")
         self.assertIn(move, expected_moves)
 
 if __name__ == '__main__':

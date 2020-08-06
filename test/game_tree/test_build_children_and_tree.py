@@ -99,7 +99,7 @@ class TestBuildForBlankRoot(unittest.TestCase):
         # todo broken and slow. Other things work, but initial version is
         #   returning more than the number of mathematically extant unique games
         #   (games meaning sequences of moves, not board configurations).
-        self.fail()
+        self.fail("Takes too long with current bad algorithm.")
         self.tree._build_tree(self.tree.root())
         self.assertEqual(255168, len(self.tree))
 

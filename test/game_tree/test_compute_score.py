@@ -229,7 +229,6 @@ class TestHeight4Subtree(unittest.TestCase):
             [0, 1, 0]
         ]
 
-
     def test_score_grid(self):
         """Does compute_score() return zero for root's score?"""
         self.tree._add_root(TicTacToeBoard(self.grid))
@@ -240,14 +239,9 @@ class TestHeight4Subtree(unittest.TestCase):
          minimax value of zero, after the full subtree is constructed?"""
         self.tree._add_root(TicTacToeBoard(self.grid))
         self.tree._build_tree(self.tree.root())
-        print(f"root's score {self.tree.root()._node._score}")
-        print(f" root().score() is None: {self.tree.root().score() is None}")
         assert len(self.tree) == 14 # should be 14 total positions now
         assert self.tree.root().element().player() == 1
         score = self.tree._score_subtree(self.tree.root())
-        for child in self.tree.children(self.tree.root()):
-            print(f"child is \n{child.element()}")
-            print(f"child's score is {child.score()}")
         self.assertEqual(0, score)
 
     def test_subtree_optimal_move_player_X(self):
@@ -261,14 +255,12 @@ class TestHeight4Subtree(unittest.TestCase):
         board.mark(move[0], move[1])
 
         # O's turn. O should mark at (2,0), else X wins next turn.
-        print(f"-----------------{len(self.tree)}----------------------")
         grid = copy.deepcopy(board.board())
         # Current approach is to construct entirely new GameTree for each move.
         tree = GameTree()
         tree._add_root(TicTacToeBoard(grid, player = 2))
         board = tree.root().element()
         assert board.player() == 2
-        print(f"board is now\n{board}")
         expected_move = (2,0)
         move = tree._subtree_optimal_move(tree.root())
         self.assertEqual(expected_move, move)

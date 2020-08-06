@@ -288,9 +288,6 @@ class GameTree(GeneralTree):
         player = self.root().element().player() # want the top-level player, not necessarily this node's player
         opponent = self.root().element().opponent() # todo recompress for conciseness
         winner = position.element().winner() # want this position's winner though, not root's (root has no winner by definition)
-        # print(f"from _score_leaf:\n\tplayer = {player}"
-        #       f"\n\topponent = {opponent}"
-        #       f"\n\twinner = {winner}")
 
         if winner == player:
             score = 1
