@@ -3,6 +3,10 @@ import unittest
 from tic_tac_toe.game_tree import GameTree
 from tic_tac_toe.board import TicTacToeBoard
 
+import copy
+
+
+
 class TestSinglePositionTreeXWin(unittest.TestCase):
     """"Test case where tree is a single Position, whose element is
     a game-over boardstate where X won."""
@@ -141,6 +145,7 @@ class TestThreePositionTreeDrawWinLose(unittest.TestCase):
         """Does the score function return 0 for a draw?"""
         self.assertEqual(0, self.tree.compute_score(self.draw_position))
 
+
 class TestMultiLayerTree(unittest.TestCase):
     """Tests for a three-layer subtree starting with root as a late game with
     7 marks on board and remaining possible outcomes X win and draw."""
@@ -211,6 +216,81 @@ class TestMultiLayerTree(unittest.TestCase):
         assert self.tree.root().element().player() == 2
         # Max should be 0 -- only possible outcomes are draw and X win.
         self.assertEqual(0, self.tree.compute_score(self.tree.root()))
+
+class TestHeight4Subtree(unittest.TestCase):
+    """Test case with root one move earlier than previous. A height-4 subtree,
+    where root is a board with three blank squares remaining, X's move."""
+
+    def setUp(self):
+        self.tree = GameTree()
+        self.grid = [
+            [1, 2, 1],
+            [0, 2, 2],
+            [0, 1, 0]
+        ]
+
+
+    def test_score_grid(self):
+        """Does compute_score() return zero for root's score?"""
+        self.tree._add_root(TicTacToeBoard(self.grid))
+        self.assertEqual(0, self.tree.compute_score(self.tree.root()))
+
+    def test_score_subtree(self):
+        """Does the score subtree method set root's score to its intended
+         minimax value of zero, after the full subtree is constructed?"""
+        self.tree._add_root(TicTacToeBoard(self.grid))
+        self.tree._build_tree(self.tree.root())
+        print(f"root's score {self.tree.root()._node._score}")
+        print(f" root().score() is None: {self.tree.root().score() is None}")
+        assert len(self.tree) == 14 # should be 14 total positions now
+        assert self.tree.root().element().player() == 1
+        score = self.tree._score_subtree(self.tree.root())
+        for child in self.tree.children(self.tree.root()):
+            print(f"child is \n{child.element()}")
+            print(f"child's score is {child.score()}")
+        self.assertEqual(0, score)
+
+    def test_subtree_optimal_move_player_X(self):
+        """Does internal optimal move method return the correct next move for
+        each position in the tree, where computer is moving for X?"""
+        self.tree._add_root(TicTacToeBoard(self.grid))
+        expected_move = (1,0) # The only move that leads to a draw for X on the recurring example subtree.
+        board = self.tree.root().element() # unpack for cleaner .mark() calls
+        move = self.tree._subtree_optimal_move(self.tree.root())
+        self.assertEqual(expected_move, move)
+        board.mark(move[0], move[1])
+
+        # O's turn. O should mark at (2,0), else X wins next turn.
+        print(f"-----------------{len(self.tree)}----------------------")
+        grid = copy.deepcopy(board.board())
+        # Current approach is to construct entirely new GameTree for each move.
+        tree = GameTree()
+        tree._add_root(TicTacToeBoard(grid, player = 2))
+        board = tree.root().element()
+        assert board.player() == 2
+        print(f"board is now\n{board}")
+        expected_move = (2,0)
+        move = tree._subtree_optimal_move(tree.root())
+        self.assertEqual(expected_move, move)
+        board.mark(move[0], move[1])
+
+    def test_optimal_move_through_gameover(self):
+        """Starting with this test case's grid, does optimal_move() return
+        the correct moves for each player?"""
+        board = TicTacToeBoard(self.grid)
+
+        # X's turn. Move should be (1,0).
+        expected_move = (1, 0)
+        move = self.tree.optimal_move(board)
+        self.assertEqual(expected_move, move)
+        board.mark(move[0], move[1]) # Mark this same board object, future subtrees will generate from its future states.
+
+        # O's turn. Move should be (2,0).
+        new_tree = GameTree()
+        expected_move = (2, 0)
+        move = new_tree.optimal_move(board)
+        self.assertEqual(expected_move, move)
+        board.mark(move[0], move[1])
 
 
 

@@ -135,53 +135,6 @@ class TestAddRoot(unittest.TestCase):
                                                         # because there's no child.
                                                         # mark() call flipped the active player without adding a child.
 
-
-
-class TestBuildLayer(unittest.TestCase):
-
-    def setUp(self):
-        self.full_board_1 = [[1, 1, 1,],
-                            [1, 1, 1,],
-                            [1, 1, 1]]
-        self.tree = GameTree()
-        self.tree._add_root((self.full_board_1, 0))
-
-    def test_board_full(self):
-        """Does the method do nothing when the board is already full?"""
-        len_start = len(self.tree)
-        self.tree._build_layer(self.tree.root(), player=1)
-        self.assertEqual(len_start, len(self.tree))
-        self.assertTrue(self.tree.is_leaf(self.tree.root()))
-
-
-class TestBuildDumbTree(unittest.TestCase):
-    """Tests for the method that builds a tree of all 250 possible legal
-    board configurations."""
-
-    def setUp(self):
-        self.tree = GameTree()
-        blank_board = TicTacToeBoard().board()
-        self.tree._add_root((blank_board, 0))
-
-        #self.tree.build_dumb_tree(self.tree.root(), player=1)
-
-    def test_root_board(self):
-        """Root's board should be blank."""
-        expected = [[0,0,0],
-                         [0,0,0],
-                         [0,0,0]]
-        actual = self.tree.root().element()[0]
-        self.assertEqual(actual, expected)
-
-    # def test_tree_size(self):
-    #     """Are there 250 total positions in the tree?"""
-    #     expected = 250
-    #     actual = len(self.tree)
-    #     self.assertEqual(expected, actual)
-
-    # def testplaceholder(self):
-    #     self.tree.parenthesize(self.tree.root())
-
 class TestMiscSimpleMethods(unittest.TestCase):
 
     def setUp(self):
@@ -230,7 +183,252 @@ class TestAddUnmarkedChildTwoMarksOnRoot(unittest.TestCase): # todo intended thi
         self.assertEqual(self.original_grid, self.grid)
         self.assertEqual(expected_new_grid, self.child_0_0.element().board())
 
+class TestPossibleMoves(unittest.TestCase):
+    """Tests for the method that returns all possible move coordinates for
+    a given position."""
 
+    def setUp(self):
+        self.tree = GameTree()
+
+
+    def test_blank_board(self):
+        """Does the method return a queue of 9 tuples, representing all squares
+        on the board, when input is a blank board?"""
+        self.tree._add_root(TicTacToeBoard())
+        moves_list = self.tree._possible_moves(self.tree.root())
+        self.assertEqual(9, len(moves_list))
+        # construct set of all squares in the board:
+        expected_moves_set = {(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2),
+                              (2, 0), (2, 1), (2, 2)}
+        moves_set = set(moves_list)
+        self.assertEqual(expected_moves_set, moves_set) # confirm all squares in set
+
+    def test_three_blank_squares(self):
+        """Does the method correctly return a queue containing the three
+        remaining blank squares in a late-game board?"""
+        grid = [
+            [1, 2, 1],
+            [0, 2, 2],
+            [0, 1, 0]
+        ]
+        self.tree._add_root(TicTacToeBoard(grid))
+        moves_list = self.tree._possible_moves(self.tree.root())
+        self.assertEqual(3, len(moves_list))
+        expected_moves_set = {(1,0), (2,0), (2,2)}
+        moves_set = set(moves_list)
+        self.assertEqual(expected_moves_set, moves_set)
+
+
+class TestScoreLeaf(unittest.TestCase):
+    """Simple test cases for the method that non-recursively returns a leaf's
+    score."""
+
+    def setUp(self):
+        self.tree = GameTree()
+
+    def test_correct_score_win(self):
+        """Does the method return 1 when position's element is a board where
+        player won?"""
+        grid = [
+            [1, 2, 1],
+            [0, 2, 2],
+            [1, 1, 1]
+        ]
+        self.tree._add_root(TicTacToeBoard(grid))
+        self.tree.root()._node._move = (2,0) # Value of move if X had just won.
+        score = self.tree._score_leaf(self.tree.root())
+        expected_score = 1
+        self.assertEqual(expected_score, score)
+        self.assertEqual(expected_score, self.tree.root().score())
+
+    def test_correct_score_loss(self):
+        """Does the method return -1 when position's element is a board where
+        player lost?"""
+        grid = [
+            [1, 2, 1],
+            [2, 2, 2],
+            [0, 1, 1]
+        ]
+        self.tree._add_root(TicTacToeBoard(grid))
+        self.tree.root()._node._move = (1, 0)  # Value of move if O had just won (moving illegally on X's turn)
+        score = self.tree._score_leaf(self.tree.root())
+        expected_score = -1
+        self.assertEqual(expected_score, score)
+        self.assertEqual(expected_score, self.tree.root().score())
+
+    def test_correct_score_draw(self):
+        """Does the method return 0 when position's element is a board ending
+        in a draw?"""
+        draw_grid = [
+            [1, 2, 1],
+            [1, 2, 2],
+            [2, 1, 1]
+        ]
+        self.tree._add_root(TicTacToeBoard(draw_grid))
+        self.tree.root()._node._move = (
+        1, 0)  # Pretend X just moved here, O magically moved at (2,0) simultaneously
+        score = self.tree._score_leaf(self.tree.root())
+        expected_score = 0
+        self.assertEqual(expected_score, score)
+        self.assertEqual(expected_score, self.tree.root().score())
+
+    def test_non_leaf_raises_error(self):
+        self.tree._add_root(TicTacToeBoard([
+            [1, 2, 1],
+            [0, 2, 2],
+            [0, 1, 1]
+        ]))
+        child = self.tree._add_marked_child(self.tree.root(), move=(2,0))
+        with self.assertRaises(ValueError):
+            self.tree._score_leaf(self.tree.root())
+
+    def test_uses_parent_player_value(self):
+        """When top level player value is different than leaf's (i.e. one
+        has odd depth, other even), does the method use the top level value?"""
+        self.tree._add_root(TicTacToeBoard([
+            [1, 2, 1],
+            [0, 2, 2],
+            [0, 1, 1]
+        ]))
+        child = self.tree._add_marked_child(self.tree.root(), move=(2, 0))
+        assert self.tree.root().element().player() == 1
+        assert child.element().player() == 2
+        assert child.element().winner() == 1
+        child._node._score = None # cancel whatever _add_marked_child did
+        assert child.score() is None, f"child.score() = {child.score()}"
+        expected_score = 1 # X win should count as a +1 since top level player is X
+        score = self.tree._score_leaf(child)
+        self.assertEqual(expected_score, score)
+        self.assertEqual(expected_score, child.score())
+
+class TestScoreSubtree(unittest.TestCase):
+    """Simple testcases for _score_subtree, not necessarily representing
+    legally reachable boardstates."""
+
+    def setUp(self):
+        self.tree = GameTree()
+
+    def test_score_parent_of_leaves(self):
+        """If all of subtree root's children are base-case leaves, does the
+        method correctly score those leaves and set parent's score to the max?"""
+        start_grid = [
+            [1,2,1],
+            [0,2,2],
+            [0,1,1]
+        ]
+        self.tree._add_root(TicTacToeBoard(start_grid))
+        X_win_grid = [
+            [1, 2, 1],
+            [0, 2, 2],
+            [1, 1, 1]
+        ]
+        X_win_child = self.tree._add_child(self.tree.root(), TicTacToeBoard(X_win_grid))
+        X_win_child._node._move = (2,0)
+
+        O_win_grid = [
+            [1, 2, 1],
+            [2, 2, 2],
+            [0, 1, 1]
+        ]
+        O_win_child = self.tree._add_child(self.tree.root(), TicTacToeBoard(O_win_grid))
+        O_win_child._node._move = (1,0)
+
+        draw_grid = [
+            [1, 2, 1],
+            [1, 2, 2],
+            [2, 1, 1]
+        ]
+        draw_child = self.tree._add_child(self.tree.root(), TicTacToeBoard(draw_grid))
+        draw_child._node._move = (1,0) # Really there were two moves, setting it to what would've been an X move that caused a draw
+
+        assert len(self.tree) == 4
+
+        score = self.tree._score_subtree(self.tree.root())
+        self.assertEqual(1, score) # should take the X win child's score
+
+class TestSubtreeOptimalMove(unittest.TestCase):
+    """Simple setUp tests for internal method that returns the optimal move
+    for a given position's boardstate."""
+
+    def setUp(self):
+        self.tree = GameTree()
+
+    def test_obvious_win_move_X(self):
+        """Does the method return correct coordinates for input boardstate
+        where the mover player can win on the next move?"""
+        grid = [
+            [0, 2, 1],
+            [0, 2, 2],
+            [0, 1, 1]
+        ]
+        self.tree._add_root(TicTacToeBoard(grid))
+        assert self.tree.root().element().player() == 1,\
+            f"player = {self.tree.root().element().player()}"
+        expected_move = (2,0)
+        move = self.tree._subtree_optimal_move(self.tree.root())
+        self.assertEqual(expected_move, move)
+
+    def test_obvious_win_move_O(self):
+        """Does the method return correct winning move coordinates for input
+        boardsate where mover player is 'O' and can win in next move?"""
+        grid = [
+            [1, 2, 1],
+            [0, 2, 2],
+            [0, 1, 1]
+        ]
+        self.tree._add_root(TicTacToeBoard(grid, player=2))
+        assert self.tree.root().element().player() == 2, \
+            f"player = {self.tree.root().element().player()}"
+        expected_move = (1,0) # O should play at 1,0 and win.
+        move = self.tree._subtree_optimal_move(self.tree.root())
+        self.assertEqual(expected_move, move)
+
+    def test_choose_draw_over_loss(self):
+        """Given boardstate where one available move will lead to draw, the other
+        to loss, does the method return the move that leads to draw?"""
+        pass
+
+class TestOptimalMove(unittest.TestCase):
+    """Simple setUp tests for the public method that takes TicTacToeBoard as
+    its input and returns the active player's optimal move."""
+
+    def setUp(self):
+
+        self.dummy_tree = GameTree() # instance to enable calling the method
+
+    def test_obvious_win_move_X(self):
+        grid = [
+            [0, 2, 1],
+            [0, 2, 2],
+            [0, 1, 1]
+        ]
+
+        board = TicTacToeBoard(grid)
+        expected_move = (2,0)
+        move = self.dummy_tree.optimal_move(board)
+        self.assertEqual(expected_move, move)
+
+    def test_obvious_win_move_O(self):
+        """Does the method return correct winning move coordinates for input
+        boardsate where mover player is 'O' and can win in next move?"""
+        grid = [
+            [1, 2, 1],
+            [0, 2, 2],
+            [0, 1, 1]
+        ]
+        board = TicTacToeBoard(grid, player=2)
+        expected_move = (1, 0)
+        move = self.dummy_tree.optimal_move(board)
+        self.assertEqual(expected_move, move)
+
+    def test_optimal_first_move_X(self):
+        """Does the method return the correct optimal opening move for X?"""
+        tree = GameTree() # need a fresh tree
+        board = TicTacToeBoard() # blank board with player X
+        expected_moves = [(0, 0), (0, 2), (2, 0), (2, 2)] # one of the corners
+        move = tree.optimal_move(board)
+        print(f"***************suggested first move: **************\n\t{move}")
+        self.assertIn(move, expected_moves)
 
 if __name__ == '__main__':
     unittest.main()
