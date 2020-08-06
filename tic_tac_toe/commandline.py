@@ -1,12 +1,15 @@
 try:
     from tic_tac_toe.board import TicTacToeBoard  # unittest defaults want it this way
+    from tic_tac_toe.game_tree import GameTree
 except:
-    from board import TicTacToeBoard # to run the script from windows system command line
+    from board import TicTacToeBoard
+    from game_tree import GameTree
+    # to run the script from windows system command line
 
 class CLIBoard:
     """Implements command line interface for the tic tac toe game."""
 
-    def __init__(self):
+    def __init__(self, humans=2):
         self._board = TicTacToeBoard()
 
     def string_player(self, player: int) -> str:
@@ -35,7 +38,7 @@ class CLIBoard:
         raw = input(">>>")
         return raw
 
-    def get_move(self):
+    def human_move(self):
         # While loop that continually prompts player for input until input is acceptable
         #   to Board.mark() method's validators
         row = None
@@ -59,11 +62,10 @@ class CLIBoard:
                     row = None
                     col = None
 
-    def send_move(self, coordinates: tuple):
-        """Send row and colum of latest move to the board object to update
-        the boardstate."""
-        row, col = coordinates
-        self._board.mark(row, col)
+    def computer_move(self):
+        tree = GameTree()
+        move = tree.optimal_move(self._board)
+        self._board.mark(move[0], move[1])
 
     def handle_outcome(self) -> str:
         """Output appropriate visual for win result.
@@ -81,14 +83,36 @@ class CLIBoard:
         print(f"{self._board}")
         print(message) 
         return message # for unittest expediency
-        
-    def main():
+
+    def player_v_player(self):
+        """Main loop for a human vs. human game."""
+        while self._board.winner() is None:
+            self.refresh_board()
+            self.human_move()
+        self.handle_outcome()
+
+    def player_v_computer(self):
+        """Main loop for a human vs. computer game."""
+        while self._board.winner() is None:
+            self.refresh_board()
+            self.human_move()
+            self.refresh_board()
+            if self._board.winner() is None: # Don't call computer_move() if human just ended the game.
+                self.computer_move() # todo abstract to get player1_move() and get player2_move()
+        self.handle_outcome()
+
+    def computer_v_computer(self):
+        """Main loop for a computer vs. computer game."""
+        pass
+
+    def main(self, player1, player2):
         """Main controlling loop for the game."""
-        game = CLIBoard()
-        while game._board.winner() is None:
-            game.refresh_board()
-            game.get_move()
-        game.handle_outcome()
+        print("CLI.main() ran")
+        print(player1.is_human() and player2.is_human())
+        if (player1.is_human() and player2.is_human()):
+            self.player_v_player()
+        elif player1.is_human() != player2.is_human(): # != is XOR here. If one but not both are human.
+            self.player_v_computer()
 
 if __name__ == '__main__':
     CLIBoard.main()

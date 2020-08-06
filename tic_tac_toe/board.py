@@ -19,7 +19,6 @@ class TicTacToeBoard:
             self._grid = grid # todo validate board
         else:
             self._grid = [[0] * 3 for j in range(3)] # 3 x 3 2D array of space character strings
-            #   todo: Rename to "grid" or "squares"
         self._player = player
         # todo validate that player is either 1 or 2, fail immediately if player is e.g. 7
 

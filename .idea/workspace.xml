@@ -3,11 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5f3ea001-c4cd-448d-91b2-76237f7d8f4a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/game_tree/test_compute_score.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/game_tree/test_compute_score.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_game_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/game_tree/test_game_tree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test_commandline.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_commandline.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tic_tac_toe/board.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/board.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tic_tac_toe/game_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/game_tree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tic_tac_toe/general_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/general_tree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tic_tac_toe/commandline.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/commandline.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +47,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests in game_tree">
+  <component name="RunManager" selected="Python.game">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="TicTacToe_AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -71,7 +69,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="commandline" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="game" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="TicTacToe_AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -83,7 +81,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tic_tac_toe/commandline.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tic_tac_toe/game.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -92,7 +90,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests in game_tree" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_build_children_and_tree.TestBuildLateGameSubtree" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="TicTacToe_AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -102,22 +100,22 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/test/game_tree&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_build_children_and_tree.TestBuildLateGameSubtree&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests in test_board.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_game_tree.TestSubtreeOptimalMove" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="TicTacToe_AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test/game_tree" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/test/test_board.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_game_tree.TestSubtreeOptimalMove&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="Unittests in test_compute_score.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
@@ -139,7 +137,7 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test/game_tree" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -150,11 +148,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Unittests in game_tree" />
-        <item itemvalue="Python tests.Unittests in test_board.py" />
+        <item itemvalue="Python.game" />
         <item itemvalue="Python tests.Unittests in test_game_tree.py" />
         <item itemvalue="Python tests.Unittests in test_compute_score.py" />
-        <item itemvalue="Python.commandline" />
+        <item itemvalue="Python tests.Unittests for test_game_tree.TestSubtreeOptimalMove" />
+        <item itemvalue="Python tests.Unittests for test_build_children_and_tree.TestBuildLateGameSubtree" />
       </list>
     </recent_temporary>
   </component>
