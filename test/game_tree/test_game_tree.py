@@ -429,6 +429,88 @@ class TestOptimalMove(unittest.TestCase):
         move = tree.optimal_move(board)
         self.assertIn(move, expected_moves)
 
+class TestOptimalMoveShortcuts(unittest.TestCase):
+    """Tests for the methods that shortcut overly large tree generation by
+    diagnosing common early-game patterns."""
+
+    def setUp(self):
+        self.tree = GameTree()
+
+    def test_only_fires_on_second_move(self):
+        """Does the method that automatically returns the center if the opponent
+        played first in a corner only get called on the second move, rather than
+        any time later in the game that at least one corner is taken?"""
+
+        bait_grids = []
+
+        bait_grid_1 = [
+            [1,1,2],
+            [0,0,0],
+            [0,0,0]
+        ]
+        bait_grids.append(bait_grid_1)
+
+        bait_grid_2 = [
+            [1, 0, 0],
+            [2, 0, 0],
+            [1, 0, 0]
+        ]
+        bait_grids.append(bait_grid_2)
+
+        bait_grid_3 = [
+            [2, 0, 0],
+            [0, 1, 1],
+            [0, 0, 0]
+        ]
+        bait_grids.append(bait_grid_3)
+
+        bait_grid_4 = [
+            [1, 2, 0],
+            [0, 0, 0],
+            [0, 1, 0]
+        ]
+        bait_grids.append(bait_grid_4)
+
+        for grid in bait_grids:
+            self.assertFalse(self.tree._first_move_in_corner(grid))
+
+    def test_correctly_detects_all_four_corners(self):
+        """Does the method correctly identify first moves into all four
+        corners?"""
+
+        grids = []
+
+        grid_1 = [
+            [1, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        grids.append(grid_1)
+
+        grid_2 = [
+            [0, 0, 1],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        grids.append(grid_2)
+
+        grid_3 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [1, 0, 0]
+        ]
+        grids.append(grid_3)
+
+        grid_4 = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 1]
+        ]
+        grids.append(grid_4)
+
+        for grid in grids:
+            self.assertTrue(self.tree._first_move_in_corner(grid))
+
 if __name__ == '__main__':
     unittest.main()
 

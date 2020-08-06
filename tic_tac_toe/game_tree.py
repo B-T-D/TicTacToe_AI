@@ -101,6 +101,9 @@ class GameTree(GeneralTree):
         # Todo Return center square in O(1) time if opponent moved first into a corner.
         #   Don't want it to auto-pick a corner any time any corner is free.
 
+        if self._first_move_in_corner(board.board()):
+            return (1, 1)
+
         # Make board the root of the tree:
         self._add_root(board)
         # Internal methods can handle it from there:
@@ -118,6 +121,42 @@ class GameTree(GeneralTree):
             return (2, 0)
         else:
             return (2, 2)
+
+    def _first_move_in_corner(self, grid):
+        """Inspect each corner of the grid to determine if opponent made first
+        move into a corner. Shortcut method to return early when AI is moving
+        second.
+
+        Args:
+            grid (list): 3 x 3 array representing tic tac toe grid.
+
+        Returns:
+            (bool): True if opponent played in a corner, else False
+        """
+        # todo collapse all into max one-linerism
+        if grid[0][0] != 0 or grid[0][2] != 0:
+            # inspect rows 1 and 2 first, since a non zero there would rule out
+            #   both cases:
+            for row in range(1, 3): # inspect full rows 1 and 2
+                if sum(grid[row]) != 0: return False
+            if grid[0][0] != 0:
+                for i in range(1,3): # inspect remainder of row 0
+                    if grid[0][i] != 0: return False
+            elif grid[0][2] != 0:
+                for i in range(2): # inspect the two preceeding row 0 sqares
+                    if grid[0][i] != 0: return False
+        elif grid[2][0] != 0 or grid[2][2] != 0:
+            # first try to rule out both via a different row:
+            for row in range(2):
+                if sum(grid[row]) != 0: return False
+            if grid[2][0] != 0:
+                for i in range(1, 3):
+                    if grid[2][i] != 0: return False
+            elif grid[2][2] != 0:
+                for i in range(2):
+                    if grid[2][i] != 0: return False
+        return True
+
 
     def _add_unmarked_child(self, position):
         """

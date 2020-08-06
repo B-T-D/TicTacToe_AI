@@ -3,10 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5f3ea001-c4cd-448d-91b2-76237f7d8f4a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/game_tree/test_compute_score.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/game_tree/test_compute_score.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/game_tree/test_game_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/game_tree/test_game_tree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tic_tac_toe/commandline.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/commandline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tic_tac_toe/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tic_tac_toe/game_tree.py" beforeDir="false" afterPath="$PROJECT_DIR$/tic_tac_toe/game_tree.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +46,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests in test_game.py">
+  <component name="RunManager" selected="Python tests.Unittests in test_game_tree.py">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="TicTacToe_AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -149,10 +147,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests in test_game_tree.py" />
         <item itemvalue="Python tests.Unittests in test_game.py" />
         <item itemvalue="Python tests.Unittests for test_game.TestPlayer" />
         <item itemvalue="Python.game" />
-        <item itemvalue="Python tests.Unittests in test_game_tree.py" />
         <item itemvalue="Python tests.Unittests in test_compute_score.py" />
       </list>
     </recent_temporary>
