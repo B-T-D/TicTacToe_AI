@@ -89,6 +89,10 @@ class GameTree(GeneralTree):
         #   so when the tree builder algo and tree-storage is improved, calls to this method
         #   are unaffected.
 
+        # todo it may have no mechanism for valuing faster wins more than
+        #   slower wins--appeared to pass on a chance to win in one move in a
+        #   game where its eventual win was guaranteed either way.
+
         # Bypass the ultra-slow full-tree build until algorithm fixed.
         #   If it's a blank board, randomly return one of the corners in
         #   O(1) time.
