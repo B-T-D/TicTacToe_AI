@@ -10,36 +10,23 @@ except:
 class Game:
     """Attributes and methods for running a game of Tic Tac Toe."""
 
-    def __init__(self, players=None, interface="commandline"):
+    def __init__(self, player1=None, player2=None,
+                 interface="commandline"):
         """
 
         Args:
             players (tuple): Two-element tuple of Player objects.
             interface (str): Interface type for the game.
         """
-        self._players = players
+        self._player1 = Player(mover=True) # Internal convention that player1
+        self._player2 = Player(mover=False) # moves first by definition.
         self._interface = interface
         if self._interface != "commandline":
             raise NotImplementedError
 
-    def _validate_mover_status(self, players):
-        """
-        If both players have same mover attribute, reset player1 to be mover.
-        If it's neither of their turn or both of their turn, set it to player1
-        turn.
-        Args:
-            players (list): This Game's _players attribute.
-        :return:
-        """
-        player1 = players[0]
-        player2 = players[1]
-        if player1.is_turn() == player2.is_turn():
-            player1.set_mover(True)
-            player2.set_mover(False)
-
-
-
     def get_human_move_second(self):
+        """Determine whether the human player should move first or second
+        in the game. Returns True if human moves first."""
         return self._get_human_move_second_terminal()
 
     def _get_human_move_second_terminal(self):
@@ -61,7 +48,33 @@ class Game:
                 continue
         return False
 
-    def main(self): # todo arg parse and pass these at the command line
+    def _set_commandline_options(self):
+        """Get command line inputs and update Player attributes as
+        needed."""
+        humans = self._get_human_players()
+        self._get_player1_marker()
+        if humans == 1: # != as XOR
+            human_move_second = self._get_human_move_second_terminal()
+            if human_move_second:
+                self._player1._human = False
+                self._player2._human = True
+            else:
+                self._player1._human = True
+                self._player2._human = False
+        elif humans == 2:
+            self._player1._human = True
+            self._player2._human = True
+        elif humans == 0:
+            self._player1._human = False
+            self._player2._human = False
+
+    def _get_human_players(self):
+        """Get command line user input and return the number of human players
+        in the game.
+
+        Returns:
+            (int): 0, 1, or 2.
+        """
         valid_input = False
         while valid_input == False:
             print("Enter the number of human players (0, 1, or 2):")
@@ -72,9 +85,12 @@ class Game:
                     valid_input = True
             except ValueError:
                 continue
+        return humans
+
+    def _get_player1_marker(self):
+        """Get command line user input to set the first-moving player's
+        marker ('X' or 'O')."""
         mark = []
-        othermark = None
-        intmark = None
         valid_input = False
         while valid_input == False:
             print("Choose X or O for the first player (human's mark if human"
@@ -87,27 +103,17 @@ class Game:
             except ValueError:
                 continue
         if mark == 'X':
-            intmark = 1
-            othermark = 2
+            self._player1._marker = 1
+            self._player2._marker = 2
         elif mark == 'O':
-            intmark = 2
-            othermark = 1
-        if humans == 1:
-            if self.get_human_move_second():
-                print(f"if self.get_human_move_second() evaluated True")
-                player1 = Player(human=False, marker=othermark, mover=True)
-                player2 = Player(human=True, marker=intmark, mover=False)
-            else:
-                player1 = Player(human=True, marker=intmark, mover=True)
-                player2 = Player(human=False, marker=othermark, mover=False)
-        elif humans == 2:
-            player1 = Player(human=True, marker=intmark, mover=True)
-            player2 = Player(human=True, marker=othermark, mover=False)
-        elif humans == 0:
-            player1 = Player(human=False, marker=intmark, mover=True)
-            player2 = Player(human=False, marker=othermark, mover=False)
-        board = TicTacToeBoard(player=player1.int_marker())
-        CLIBoard(board, player1, player2).main()
+            self._player1._marker = 2
+            self._player2._marker = 1
+
+    def main(self): # todo arg parse and pass these at the command line
+        if self._interface == "commandline":
+            self._set_commandline_options()
+        board = TicTacToeBoard(player=self._player1.int_marker())
+        CLIBoard(board, self._player1, self._player2).main()
 
 class Player:
 

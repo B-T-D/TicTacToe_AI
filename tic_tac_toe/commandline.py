@@ -143,6 +143,8 @@ class CLIBoard:
         print(f"self._player1.is_human() = {self._player1.is_human()}")
         print(f"self._player2.is_human() = {self._player2.is_human()}")
         if self._player1.is_human() and self._player2.is_human():
+            print(f"Starting human vs. human game ({self._player1.marker()} "
+                  f"moves first)")
             self.player_v_player()
         elif self._player1.is_human() and not self._player2.is_human():
             print(f"starting human vs. computer game (human moves first)")
