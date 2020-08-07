@@ -46,7 +46,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests in test_game_tree.py">
+  <component name="RunManager" selected="Python.game">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="TicTacToe_AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -147,10 +147,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.game" />
         <item itemvalue="Python tests.Unittests in test_game_tree.py" />
         <item itemvalue="Python tests.Unittests in test_game.py" />
         <item itemvalue="Python tests.Unittests for test_game.TestPlayer" />
-        <item itemvalue="Python.game" />
         <item itemvalue="Python tests.Unittests in test_compute_score.py" />
       </list>
     </recent_temporary>

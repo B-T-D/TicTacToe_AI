@@ -33,19 +33,20 @@ class Game:
         valid_input = False
         attempts = 0
         affirmative_raws = ['y', 'yes', '1', 'true', 't']
-        negative_raws = ['n', 'n', '0', 'false', 'f']
+        negative_raws = ['n', 'no', '0', 'false', 'f']
         while (valid_input is False) and attempts < 3: # Just move on after 3 attempts
             print("Human player move second? (Y/N)")
             raw = input(">>>")
             try:
                 if raw.lower() in affirmative_raws:
                     return True
+                    valid_input = True
                 elif raw.lower() in negative_raws:
                     return False
-                valid_input = True
+                    valid_input = True
             except ValueError:
-                attempts += 1
                 continue
+            attempts += 1
         return False
 
     def _set_commandline_options(self):
