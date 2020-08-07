@@ -17,9 +17,9 @@ Linux:
 # Playing a game
 Enter moves as row, column integer coordinates between 0 and 2 inclusive. For example, (0,0) marks the top left corner square, (1,1) the center, and (2,2) the bottom right corner:
 
-
-      (0,0) | (0,1) | (0,2)
-      ---------------------
-      (1,0) | (1,1) | (1,2)
-      ---------------------
-      (2,0) | (2,1) | (2,2)
+           row 0   row 1   row 2
+    col 0  (0,0) | (0,1) | (0,2)
+          ---------------------
+    col 1  (1,0) | (1,1) | (1,2)
+          ---------------------
+    col 2  (2,0) | (2,1) | (2,2)
