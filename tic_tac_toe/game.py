@@ -2,10 +2,10 @@
 
 try:
     from tic_tac_toe.board import TicTacToeBoard
-    from tic_tac_toe.commandline import CLIBoard # unittest defaults want it this way
+    from tic_tac_toe.commandline import CLIBoard
 except:
     from board import TicTacToeBoard
-    from commandline import CLIBoard # to run the script from windows system command line
+    from commandline import CLIBoard
 
 class Game:
     """Attributes and methods for running a game of Tic Tac Toe."""
@@ -47,7 +47,7 @@ class Game:
         attempts = 0
         affirmative_raws = ['y', 'yes', '1', 'true', 't']
         negative_raws = ['n', 'n', '0', 'false', 'f']
-        while (valid_input is False) and attempts < 3: # Nonvital so move on after 3 attempts
+        while (valid_input is False) and attempts < 3: # Just move on after 3 attempts
             print("Human player move second? (Y/N)")
             raw = input(">>>")
             try:
@@ -93,7 +93,6 @@ class Game:
             intmark = 2
             othermark = 1
         if humans == 1:
-            print(f"from game.py:\n")
             if self.get_human_move_second():
                 print(f"if self.get_human_move_second() evaluated True")
                 player1 = Player(human=False, marker=othermark, mover=True)
