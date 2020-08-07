@@ -25,11 +25,13 @@ class Game:
             raise NotImplementedError
 
     def get_human_move_second(self):
-        """Determine whether the human player should move first or second
-        in the game. Returns True if human moves first."""
+        """Give human user the option of making the second move instead of
+        the first."""
         return self._get_human_move_second_terminal()
 
     def _get_human_move_second_terminal(self):
+        """Get command line input to determine if human player wants to move
+        first or second (in a human vs. computer game)."""
         valid_input = False
         attempts = 0
         affirmative_raws = ['y', 'yes', '1', 'true', 't']

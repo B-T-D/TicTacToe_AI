@@ -1,3 +1,5 @@
+import time
+
 try:
     from tic_tac_toe.board import TicTacToeBoard  # unittest defaults want it this way
     from tic_tac_toe.game_tree import GameTree
@@ -63,9 +65,14 @@ class CLIBoard:
                     col = None
 
     def computer_move(self, player):
+        # todo option to toggle whether to output the AI's move-computation time
+        start = time.time()
         tree = GameTree()
         move = tree.optimal_move(self._board)
         self._board.mark(move[0], move[1])
+        end = time.time()
+        ms = (end - start) * 1000
+        print(f"AI computed move in {ms} ms:\n")
 
     def _swap_players(self):
         """Swap which player is mover.""" # todo centralize control of both Player and Board in Game
