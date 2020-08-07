@@ -1,5 +1,7 @@
 # TicTacToe_AI
-Plays tic tac toe using a game tree and minimax algorithm to find optimal moves.
+Plays tic tac toe using a game tree and minimax algorithm to find optimal moves. 
+
+Includes a command line interface that supports human vs. computer, human vs. human, and computer vs. computer games. The AI should play a perfect game every time--always tie or win. 
 
 # Installation
 Clone this repository onto a system where Python is installed and the Python interpreter is available via the command line.
