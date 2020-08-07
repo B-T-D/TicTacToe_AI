@@ -14,7 +14,7 @@ Linux:
 
     $ python3 -m tictactoe
 
-# Playing a command line game
+# Playing a game
 Enter moves as row, column integer coordinates between 0 and 2 inclusive. For example, (0,0) marks the top left corner square, (1,1) the center, and (2,2) the bottom right corner:
 
 
