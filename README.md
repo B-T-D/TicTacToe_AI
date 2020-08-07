@@ -6,6 +6,8 @@ Includes a command line interface that supports human vs. computer, human vs. hu
 # Installation
 Clone this repository onto a system where Python is installed and the Python interpreter is available via the command line.
 
+No dependencies beyond the Python standard library.
+
 # Starting a game
 Windows 10:
   
