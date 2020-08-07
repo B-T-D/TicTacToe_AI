@@ -115,6 +115,17 @@ class CLIBoard:
                 self._swap_players()
         self.handle_outcome()
 
+    def computer_v_player(self):
+        while self._board.winner() is None:
+            self.refresh_board()
+            self.computer_move(self._player1)
+            self._swap_players()
+            self.refresh_board()
+            if self._board.winner() is None:
+                self.human_move(self._player2)
+                self._swap_players()
+        self.handle_outcome()
+
     def computer_v_computer(self):
         """Main loop for a computer vs. computer game."""
         while self._board.winner() is None:
@@ -129,10 +140,16 @@ class CLIBoard:
 
     def main(self):
         """Main controlling loop for the game."""
-        if (self._player1.is_human() and self._player2.is_human()):
+        print(f"self._player1.is_human() = {self._player1.is_human()}")
+        print(f"self._player2.is_human() = {self._player2.is_human()}")
+        if self._player1.is_human() and self._player2.is_human():
             self.player_v_player()
-        elif self._player1.is_human() != self._player2.is_human(): # != is XOR here. If one but not both are human.
+        elif self._player1.is_human() and not self._player2.is_human():
+            print(f"starting human vs. computer game (human moves first)")
             self.player_v_computer()
+        elif self._player2.is_human() and not self._player1.is_human():
+            print(f"Starting computer vs. human game (computer moves first)")
+            self.computer_v_player()
         elif not self._player1.is_human() and not self._player2.is_human():
             self.computer_v_computer()
 

@@ -38,6 +38,29 @@ class Game:
             player2.set_mover(False)
 
 
+
+    def get_human_move_second(self):
+        return self._get_human_move_second_terminal()
+
+    def _get_human_move_second_terminal(self):
+        valid_input = False
+        attempts = 0
+        affirmative_raws = ['y', 'yes', '1', 'true', 't']
+        negative_raws = ['n', 'n', '0', 'false', 'f']
+        while (valid_input is False) and attempts < 3: # Nonvital so move on after 3 attempts
+            print("Human player move second? (Y/N)")
+            raw = input(">>>")
+            try:
+                if raw.lower() in affirmative_raws:
+                    return True
+                elif raw.lower() in negative_raws:
+                    return False
+                valid_input = True
+            except ValueError:
+                attempts += 1
+                continue
+        return False
+
     def main(self): # todo arg parse and pass these at the command line
         valid_input = False
         while valid_input == False:
@@ -70,8 +93,14 @@ class Game:
             intmark = 2
             othermark = 1
         if humans == 1:
-            player1 = Player(human=True, marker=intmark, mover=True)
-            player2 = Player(human=False, marker=othermark, mover=False)
+            print(f"from game.py:\n")
+            if self.get_human_move_second():
+                print(f"if self.get_human_move_second() evaluated True")
+                player1 = Player(human=False, marker=othermark, mover=True)
+                player2 = Player(human=True, marker=intmark, mover=False)
+            else:
+                player1 = Player(human=True, marker=intmark, mover=True)
+                player2 = Player(human=False, marker=othermark, mover=False)
         elif humans == 2:
             player1 = Player(human=True, marker=intmark, mover=True)
             player2 = Player(human=True, marker=othermark, mover=False)
