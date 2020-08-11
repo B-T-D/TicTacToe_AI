@@ -8,6 +8,9 @@ class GameTree(GeneralTree):
     """Tree of possible tic tac toe game states."""
 
     class _Node(GeneralTree._Node): # override GeneralTree's _Node class
+        __slots__ = '_move', '_score'
+        # This should add these to slots while also keeping the slots inherited
+        #   from _Node
 
         def __init__(self, element, parent=None, children=None,
                      move=None, score=None):
