@@ -36,14 +36,6 @@ class TestSinglePositionTreeXWin(unittest.TestCase):
         # Make a root in self.tree with self.board as its element
         self.tree._add_root(self.board)
 
-    def test_score_is_neg1(self):
-        """Does the function return 1 for a board at a root-and-leaf position
-        where 1 is the winner?"""
-
-        assert self.board.player() == 2 # Should be at 2 since X made the final
-                                        # (and winning) move in setUp's mark() calls
-        self.assertEqual(-1, self.tree.compute_score(self.tree.root()))
-
 class TestSinglePositionTreeOWin(unittest.TestCase):
     """Test case where tree is a single Position, whose element is a game-over
     board state where 'O' won."""
@@ -72,14 +64,6 @@ class TestSinglePositionTreeOWin(unittest.TestCase):
 
         # Make a root in self.tree with self.board as its element
         self.tree._add_root(self.board)
-
-    def test_score_is_neg1(self):
-        """Does the function return 1 for a board at a root-and-leaf position
-        where 1 is the winner?"""
-
-        assert self.board.player() == 1 # Should be at 2 since X made the final
-                                        # (and winning) move in setUp's mark() calls
-        self.assertEqual(-1, self.tree.compute_score(self.tree.root()))
 
 class TestThreePositionTreeDrawWinLose(unittest.TestCase):
     """Test case for a three position subtree where root is an incomplete board
@@ -134,17 +118,9 @@ class TestThreePositionTreeDrawWinLose(unittest.TestCase):
         assert len(self.tree) == 4
         assert self.tree.num_children(self.tree.root()) == 3
 
-    def test_X_win_scores_poz1(self):
-        self.assertEqual(1, self.tree.compute_score(self.X_win_position))
-
-    def test_O_win_scores_neg1(self):
-        """Does the score function return -1 for the position where O wins?"""
-        self.assertEqual(-1, self.tree.compute_score(self.O_win_position))
-
-    def test_draw_scores_zero(self):
-        """Does the score function return 0 for a draw?"""
-        self.assertEqual(0, self.tree.compute_score(self.draw_position))
-
+    def test_placeholder(self):
+        self.fail("This test case has no actual tests. Use to test other methods"
+                  "or else delete it.")
 
 class TestMultiLayerTree(unittest.TestCase):
     """Tests for a three-layer subtree starting with root as a late game with
@@ -188,34 +164,10 @@ class TestMultiLayerTree(unittest.TestCase):
         # Tree should now be 5 positions total
         assert len(self.tree) == 5
 
-    def test_basecase_leaves(self):
-        """Does the function return the correct scores for the leaf nodes
-        of this subtree--the base case of the recursion?"""
-        # the one where X won should return -1 since O lost and X's .mark()
-        #   call set ._player to 'O'
-        self.assertEqual(-1, self.tree.compute_score(self.child_1_0))
-        # Leaf with draw should score zero
-        self.assertEqual(0, self.tree.compute_score(self.child_1_1))
-
-    def test_height_1_subtree_root(self):
-        """For a position with one nonzero-scoring child, does the function
-        return the negation of that child's score?"""
-        # Position with player=X whose child represents the sole remaining
-        #   possible move being an X win should score 1.
-        assert self.tree.depth(self.child_0_0) == 1
-        # at child 0_0, player is O-2. Minimax should be returning the "max"
-        #   of the children, which means -1 because there's only one child.
-        self.assertEqual(-1, self.tree.compute_score(self.child_0_0))
-
-    def test_height_2_subtree_root(self):
-        """Does a root with 2 layers beneath it, with multiple diverging
-        values to "choose from", correctly return the max to its caller?"""
-        # Player should be O-2 at root. Root represents a boardstate where
-        #   it would be O's turn. O would be calling minimax to identify the
-        #   max scoring move option.
-        assert self.tree.root().element().player() == 2
-        # Max should be 0 -- only possible outcomes are draw and X win.
-        self.assertEqual(0, self.tree.compute_score(self.tree.root()))
+    def test_placeholder(self):
+        self.fail(
+            "This test case has no actual tests. Use to test other methods"
+            "or else delete it.")
 
 class TestHeight4Subtree(unittest.TestCase):
     """Test case with root one move earlier than previous. A height-4 subtree,
@@ -228,11 +180,6 @@ class TestHeight4Subtree(unittest.TestCase):
             [0, 2, 2],
             [0, 1, 0]
         ]
-
-    def test_score_grid(self):
-        """Does compute_score() return zero for root's score?"""
-        self.tree._add_root(TicTacToeBoard(self.grid))
-        self.assertEqual(0, self.tree.compute_score(self.tree.root()))
 
     def test_score_subtree(self):
         """Does the score subtree method set root's score to its intended

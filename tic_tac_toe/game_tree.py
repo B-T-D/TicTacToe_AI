@@ -264,35 +264,6 @@ class GameTree(GeneralTree):
             child = children_queue.dequeue()
             self._build_children(child, children_queue)
 
-    def compute_score(self, position) -> int:
-        """Return the score of the node at position to appropriate int value to the caller.
-
-        If node is a leaf, assign 1 for player-win, 0 for draw, -1 for
-        opponent win. If node not leaf, take the min or max of the value returned
-        by recursively calling compute_value() on each of position's children.
-        """
-        node = self._validate(position)
-        if self.is_leaf(position):  # base case
-            winner = position.element().winner()
-            if winner == position.element().player():
-                return 1
-            elif winner == position.element().opponent():  # "opponent" here means the original minimax caller
-                # print("-------------returned from elif")
-                return -1
-            else:  # value should be none
-                # print("-----------Returned from else----------------")
-                return 0  # if it's a leaf and board.winner() returns None, that should indicate
-                #   a tie (rather than an incomplete game).
-        elif self.depth(position) % 2 == 0:  # max at even numbered layers
-            child_values = [self.compute_score(i) for i in
-                            self.children(position)]
-            return max(
-                child_values)  # todo collapse to one liner max(listcomp)
-        elif self.depth(position) % 2 == 1:  # min at odd numbered layers
-            child_values = [self.compute_score(i) for i in
-                            self.children(position)]
-            return (min(child_values))
-
     def _score_leaf(self, position):
         if not self.is_leaf(position):
             raise ValueError("Position must be a gameover leaf.")

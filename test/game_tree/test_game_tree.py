@@ -129,7 +129,7 @@ class TestAddRoot(unittest.TestCase):
         assert board.winner() == 1
         assert board.player() == 2 # player should be set to O-2
         self.tree._add_root(board, move)
-        score = self.tree.compute_score(self.tree.root())
+        score = self.tree._score_subtree(self.tree.root())
         self.tree.root()._node._score = score
         self.assertEqual(-1, self.tree.root().score()) # minimax will return the flipped score,
                                                         # because there's no child.
