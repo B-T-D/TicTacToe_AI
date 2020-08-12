@@ -8,28 +8,27 @@ class GameTree(GeneralTree):
     """Tree of possible tic tac toe game states."""
 
     class _Node(GeneralTree._Node): # override GeneralTree's _Node class
-        __slots__ = '_move', '_score'
-        # This should add these to slots while also keeping the slots inherited
-        #   from _Node
+        __slots__ = '_move', '_score' # add these to slots while also keeping 
+                                        # the slots inherited from _Node
 
         def __init__(self, element, parent=None, children=None,
                      move=None, score=None):
             """
-
-            :param element (TicTacToeBoard): a TicTacToeBoard object
-            :param parent:
-            :param children:
-            :param move: The move that produced this node's boardstate, else
-                None for a blank board.
-            :param score: This node's score as computed by the minimax method,
-                else None.
+            Initialize a new _Node object.
+            
+            Args:
+                element (TicTacToeBoard): a TicTacToeBoard object
+                parent (_Node): This _Node's parent in the tree
+                children (list): Python list of _Node objects representing this 
+                    _Node's children in the tree.
+                move (tuple): (row, column) tuple indicating the move that produced 
+                    this _Node's boardstate, else None for a blank board.
+                score (int): This node's score as computed by the minimax method (-1, 0, or 1),
+                    else None.
             """
-            # todo: What about __slots__? That won't have move and score.
             super().__init__(element, parent, children)
             self._move = move
             self._score = score
-
-        # TODO should score initialize to None? See if 0 causes minimax implementation probs
 
     class Position(GeneralTree.Position):
         """Extensions to inherited Position nested-class to support accessor
@@ -61,14 +60,9 @@ class GameTree(GeneralTree):
             """
             return self._node._score
 
-    # Haven't actually needed to override GeneralTree's __init__, yet.
-
     def _add_root(self, element, move=None, score=None):
         """Override of inherited method to support adding move and score in addition
         to element."""
-        # todo seemed most expedient not to try to integrate a super() call to
-        #   the inherited _add_root, because it tangles into the GeneralTree's
-        #   make_position and calls GeneralTree's Position constructor instead.
         if self._root is not None:
             raise ValueError('Root exists')
         self._size = 1
@@ -77,6 +71,8 @@ class GameTree(GeneralTree):
 
 
     def optimal_move(self, board):
+        # External calls to this method should be completely unaffected by future
+        #   fixes to the tree-building and storage implementation.
         """
         Return the optimal next move for player based on state of board, as a
         two-element (row, column) tuple.
@@ -88,10 +84,6 @@ class GameTree(GeneralTree):
             (tuple): (row, column) coordinates of optimal move for board's
                 active player.
         """
-        # todo wrapper for the internal _subtree_optimal_score. Encapsulate everything else
-        #   so when the tree builder algo and tree-storage is improved, calls to this method
-        #   are unaffected.
-
         # todo it may have no mechanism for valuing faster wins more than
         #   slower wins--appeared to pass on a chance to win in one move in a
         #   game where its eventual win was guaranteed either way.
@@ -111,10 +103,9 @@ class GameTree(GeneralTree):
         if self._first_move_in_corner(board.board()):
             return (1, 1)
 
-        # Make board the root of the tree:
-        self._add_root(board)
-        # Internal methods can handle it from there:
-        return self._subtree_optimal_move(self.root())
+        self._add_root(board) # Make board the root of the tree
+        return self._subtree_optimal_move(self.root()) # Internal methods can handle 
+                                                        # it from there
 
     def _random_corner(self):
         """Return tuple corresponding to coordinates for randomly chosen corner
@@ -140,7 +131,6 @@ class GameTree(GeneralTree):
         Returns:
             (bool): True if opponent played in a corner, else False
         """
-        # todo collapse all into max one-linerism
         if grid[0][0] != 0 or grid[0][2] != 0:
             # inspect rows 1 and 2 first, since a non zero there would rule out
             #   both cases:
@@ -204,15 +194,7 @@ class GameTree(GeneralTree):
         child = self._add_unmarked_child(position) # todo prob will be able to collapse later
         child.element().mark(move[0], move[1])
         child._node._move = move
-        # todo NB: Can't compute the score here because you don't know the value
-        #   of _player for the relevant root. Score depends on the top-level
-        #   player, i.e. who's calling minimax. You can only know positive vs.
-        #   negative relatively via tree.depth(child) after you know who the
-        #   player is at depth=0.
-
-
         return child
-
 
     def _possible_moves(self, position) -> list:
         """
@@ -292,21 +274,7 @@ class GameTree(GeneralTree):
         node = self._validate(position)
         if self.is_leaf(position):  # base case
             winner = position.element().winner()
-            if winner == position.element().player():  # what .player() returns at this point in execution
-                # is actually the opponent of who just moved.
-                # player() tells the caller "after the most recent .mark()
-                # call placed a mark, it became this person's turn:".
-                # If X places a mark with a .mark() call, and wins, the
-                # ._player attribute of the TicTacToeBoard that returns X
-                # for .winner() is O, not X.
-
-                # Here, position.element().player() isn't necessarily
-                # the player running the minimax algorithm. It's the
-                # player who would get to move next if this node
-                # weren't a gameover leaf.
-
-                # ".player()" might be better named "mover".
-                # print("-------Returned from first if condition")
+            if winner == position.element().player():
                 return 1
             elif winner == position.element().opponent():  # "opponent" here means the original minimax caller
                 # print("-------------returned from elif")
@@ -315,14 +283,11 @@ class GameTree(GeneralTree):
                 # print("-----------Returned from else----------------")
                 return 0  # if it's a leaf and board.winner() returns None, that should indicate
                 #   a tie (rather than an incomplete game).
-        # Need to call depth() here I think, because need to alternate min and maxing with each
-        #   layer of children you recurse through.
         elif self.depth(position) % 2 == 0:  # max at even numbered layers
             child_values = [self.compute_score(i) for i in
                             self.children(position)]
             return max(
-                child_values)  # collapse to one liner max(listcomp) if this is correct
-            # compare with recursive delete for how to iterate children while recursing
+                child_values)  # todo collapse to one liner max(listcomp)
         elif self.depth(position) % 2 == 1:  # min at odd numbered layers
             child_values = [self.compute_score(i) for i in
                             self.children(position)]
@@ -361,10 +326,7 @@ class GameTree(GeneralTree):
         Returns:
             None
         """
-        # print("---------------------------------")
-        # print(f"_score_tree called on \n{position.element()}")
         if self.is_leaf(position):
-            # print(f"scoring gameover leaf")
             return self._score_leaf(position)
         else: # following 5 lines are just a long-winded "elif all children are scored"
             child_scores = [] # todo does it make sense to opportunistically build the list here, to reduce number of passes through children? or wasteful?
@@ -384,12 +346,10 @@ class GameTree(GeneralTree):
                     return score
                 elif self.depth(
                         position) % 2 == 1:  # todo compress once it works, e.g. shouldn't need an elif or even an else here if logic is correct
-                    # print(f"taking min of child scores")
                     score = min(child_scores)
                     position._node._score = score
                     return score
         # Recursive case -- internal node with unscored children
-        # print(f"position was not leaf and did not have scored-children leaves")
         for child in self.children(position):
             self._score_subtree(child)
         return self._score_subtree(position) # re-call the function on original position after all children scores
@@ -412,13 +372,7 @@ class GameTree(GeneralTree):
         max_score = -10 # Must be < -1
         best_move = None
         for child in self.children(position):
-            # print(f"child is \n{child.element()}"
-            #       f"\n\tscore = {child.score()}"
-            #       f"\n\tmove to child  = {child.move()}")
             if child.score() > max_score:
                 max_score = child.score()
                 best_move = child._node._move
         return best_move
-
-
-
