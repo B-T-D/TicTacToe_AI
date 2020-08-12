@@ -237,8 +237,8 @@ class GameTree(GeneralTree):
         Returns:
             None
         """
-        if position.element().winner() is not None: # Don't waste time trying to add children to a gameover board.
-            return
+        if position.element().winner() is not None: # Don't waste time adding
+            return                                  # children to gameover board
         moves_queue = LinkedQueue()
         # a move leaves the moves queue, becomes a child, and enters the child queue
         self._enqueue_moves(self._possible_moves(position), moves_queue)
@@ -259,7 +259,7 @@ class GameTree(GeneralTree):
                 as its element. Defaults to root.
         """
         children_queue = LinkedQueue()
-        self._build_children(position, children_queue) # this will enqueue some children
+        self._build_children(position, children_queue) # enqueues some children
         while not children_queue.is_empty():
             child = children_queue.dequeue()
             self._build_children(child, children_queue)
@@ -283,7 +283,6 @@ class GameTree(GeneralTree):
             score = 0
             position._node._score = score
             return score
-
 
     def _score_subtree(self, position):
         """
@@ -309,22 +308,19 @@ class GameTree(GeneralTree):
                     child_scores.append(child.score())
             if children_scored == True:
                 child_scores = [c.score() for c in self.children(position)]
-                # print(f"child_scores = {child_scores}")
-                if self.depth(position) % 2 == 0:
-                    # print(f"taking max of child scores")
+                if self.depth(position) % 2 == 0: # Take the max at even depths
                     score = max(child_scores)
                     position._node._score = score
                     return score
-                elif self.depth(
-                        position) % 2 == 1:  # todo compress once it works, e.g. shouldn't need an elif or even an else here if logic is correct
+                else: # Take the min at odd depths
                     score = min(child_scores)
                     position._node._score = score
                     return score
         # Recursive case -- internal node with unscored children
         for child in self.children(position):
             self._score_subtree(child)
-        return self._score_subtree(position) # re-call the function on original position after all children scores
-
+        return self._score_subtree(position) # re-call the function on original
+                                            # position after scoring all children
 
     def _subtree_optimal_move(self, position):
         """
