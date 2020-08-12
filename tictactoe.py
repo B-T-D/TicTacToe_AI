@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """Starts a command line game."""
 
 from tic_tac_toe import game
