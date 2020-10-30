@@ -1,0 +1,13 @@
+# TicTacToe_AI/.travis.yml
+
+sudo: required
+language: python
+python:
+    - "3.8"
+
+install:
+    - pip install pytest
+    - pip install pytest-cov
+
+script:
+    - python3 -m pytest
