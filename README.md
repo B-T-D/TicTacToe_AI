@@ -1,3 +1,5 @@
+[![Travis CI](https://travis-ci.com/B-T-D/TicTacToe_AI.svg?branch=master)](https://travis-ci.com/github/B-T-D/https://travis-ci.com/github/B-T-D/TicTacToe_AI)
+
 # TicTacToe_AI
 Plays tic tac toe using a game tree and minimax algorithm to find optimal moves. 
 
