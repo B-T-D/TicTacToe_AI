@@ -5,8 +5,6 @@ from tic_tac_toe.board import TicTacToeBoard
 
 import copy
 
-
-
 class TestSinglePositionTreeXWin(unittest.TestCase):
     """"Test case where tree is a single Position, whose element is
     a game-over boardstate where X won."""
@@ -69,7 +67,7 @@ class TestThreePositionTreeDrawWinLose(unittest.TestCase):
     """Test case for a three position subtree where root is an incomplete board
     with three children, one representing a draw, one representing an X win,
     and one representing an O win."""
-    # Not concernet with these being legally-reachable boardstates (they
+    # Not concerned with these being legally-reachable boardstates (they
     # couldn't all exist on the same level like this in a real game). Goal is
     # just to unit test that the function assigns 1 vs -1 vs 0 correctly at
     # a given level (a constant value for player).
@@ -119,8 +117,9 @@ class TestThreePositionTreeDrawWinLose(unittest.TestCase):
         assert self.tree.num_children(self.tree.root()) == 3
 
     def test_placeholder(self):
-        self.fail("This test case has no actual tests. Use to test other methods"
-                  "or else delete it.")
+        pass
+        # TODO this testcase class has no actual tests. Leaving it as of
+        #   2020-10-30 because of the elaborate coding in the setUp method.
 
 class TestMultiLayerTree(unittest.TestCase):
     """Tests for a three-layer subtree starting with root as a late game with
@@ -165,9 +164,9 @@ class TestMultiLayerTree(unittest.TestCase):
         assert len(self.tree) == 5
 
     def test_placeholder(self):
-        self.fail(
-            "This test case has no actual tests. Use to test other methods"
-            "or else delete it.")
+        pass
+        # TODO this testcase class has no actual tests. Leaving it as of
+        #   2020-10-30 because of the elaborate coding in the setUp method.
 
 class TestHeight4Subtree(unittest.TestCase):
     """Test case with root one move earlier than previous. A height-4 subtree,
