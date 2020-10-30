@@ -7,7 +7,7 @@ Plays tic tac toe using a game tree and minimax algorithm to find optimal moves.
 Includes a command line interface that supports human vs. computer, human vs. human, and computer vs. computer games. The AI should play a perfect game every time--always tie or win.
 
 # Background
-My goal for this project was to implement a minimax game-tree algorithm all the way through to a useable piece of software. In addition to playing with minimax, I wanted to apply good object-oriented programming practices as best I could, and do it from scratch with minimal external dependency packages. 
+I wanted to implement a minimax game-tree algorithm all the way through to a useable piece of software. In addition to playing with minimax, I wanted to apply good object-oriented programming practices as best I could, and do it from scratch with minimal external dependency packages. 
 
 I didn't set out to write a tic tac toe program per se--I know there are simpler ways to do that!
 
