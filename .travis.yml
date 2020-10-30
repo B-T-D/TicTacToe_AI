@@ -9,4 +9,5 @@ install:
     - pip install pytest-cov
 
 script:
-    - python3 -m pytest
+    - python3 -m pytest --cov
+after_success: "coveralls"
