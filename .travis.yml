@@ -1,6 +1,5 @@
 # TicTacToe_AI/.travis.yml
 
-sudo: required
 language: python
 python:
     - "3.8"
