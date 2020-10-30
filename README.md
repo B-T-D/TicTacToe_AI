@@ -1,7 +1,12 @@
 # TicTacToe_AI
 Plays tic tac toe using a game tree and minimax algorithm to find optimal moves. 
 
-Includes a command line interface that supports human vs. computer, human vs. human, and computer vs. computer games. The AI should play a perfect game every time--always tie or win. 
+Includes a command line interface that supports human vs. computer, human vs. human, and computer vs. computer games. The AI should play a perfect game every time--always tie or win.
+
+# Background
+My goal for this project was to implement a minimax game-tree algorithm all the way through to a useable piece of software. In addition to playing with minimax, I wanted to apply good object-oriented programming practices as best I could, and do it from scratch with minimal external dependency packages. 
+
+I didn't set out to write a tic tac toe program per se--I know there are simpler ways to do that!
 
 # Installation
 Clone this repository onto a system where Python is installed and the Python interpreter is available via the command line.
@@ -17,7 +22,7 @@ Linux:
     $ python3 -m tictactoe
 
 # Playing a game
-Enter moves as row, column integer coordinates between 0 and 2 inclusive. For example, (0,0) marks the top left corner square, (1,1) the center, and (2,0) the bottom left corner:
+Enter moves as row, column coordinates in [0 .. 2] (integers between 0 and 2, inclusive). For example, (0,0) marks the top left corner square, (1,1) the center, and (2,0) the bottom left corner:
 
            col 0   col 1   col 2
     row 0  (0,0) | (0,1) | (0,2)
