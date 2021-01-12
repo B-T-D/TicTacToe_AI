@@ -286,7 +286,7 @@ class GameTree(GeneralTree):
 
     def _score_subtree(self, position):
         """
-        Update the score attribute for the node at each Position in the
+        Recursively update the score attribute for the node at each Position in the
         subtree rooted at Position.
 
         Args:
@@ -298,8 +298,9 @@ class GameTree(GeneralTree):
         """
         if self.is_leaf(position):
             return self._score_leaf(position)
-        else: # following 5 lines are just a long-winded "elif all children are scored"
-            child_scores = [] # todo does it make sense to opportunistically build the list here, to reduce number of passes through children? or wasteful?
+        # Base case: All leaves are scored, so can score the full tree:
+        else:
+            child_scores = []
             children_scored = True # todo how is there not a more concise listcomp way to check if all children are scored?
             for child in self.children(position): # todo store it as an instance variable of each Position?
                 if child.score() is None:
@@ -316,11 +317,10 @@ class GameTree(GeneralTree):
                     score = min(child_scores)
                     position._node._score = score
                     return score
-        # Recursive case -- internal node with unscored children
+        # Recursive case: internal node with unscored children:
         for child in self.children(position):
             self._score_subtree(child)
-        return self._score_subtree(position) # re-call the function on original
-                                            # position after scoring all children
+        return self._score_subtree(position) # re-call after scoring all children
 
     def _subtree_optimal_move(self, position):
         """
