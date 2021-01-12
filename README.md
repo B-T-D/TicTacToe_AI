@@ -1,4 +1,4 @@
-[![Travis CI](https://travis-ci.com/B-T-D/TicTacToe_AI.svg?branch=master)](https://travis-ci.com/github/B-T-D/https://travis-ci.com/github/B-T-D/TicTacToe_AI)
+[![Travis CI](https://travis-ci.com/B-T-D/TicTacToe_Minimax.svg?branch=master)](https://travis-ci.com/github/B-T-D/https://travis-ci.com/github/B-T-D/TicTacToe_AI)
 [![Coverage Status](https://coveralls.io/repos/github/B-T-D/TicTacToe_AI/badge.svg?branch=master)](https://coveralls.io/github/B-T-D/TicTacToe_AI?branch=master)
 
 # TicTacToe_Minimax
