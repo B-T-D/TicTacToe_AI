@@ -1,5 +1,13 @@
 """Main game controller script."""
 
+# Todo: Resolve serious spaghettification between this module and commandline.py.
+#   This game.py module should either be interface-agnostic (so that it could be
+#   the API for a hypothetical future GUI), or else integrated with
+#   commandline.py. Right now, it's both inherently entangled with implementation
+#   details of CLI, and also a separate module from the module that's supposed
+#   to own the commandline and be centrally responsible for interfacing between
+#   CLI and non-visual game logic--spaghetti.
+
 try:
     from tic_tac_toe.board import TicTacToeBoard
     from tic_tac_toe.commandline import CLIBoard
